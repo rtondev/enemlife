@@ -1,0 +1,251 @@
+{% extends "dashboard_base.html" %}
+
+{% block page_title %}Relatórios{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900">Relatórios e Estatísticas</h2>
+    <p class="text-gray-600">Acompanhe seu progresso e desempenho</p>
+</div>
+
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Conteúdos Estudados</p>
+                <p class="text-2xl font-bold text-gray-900" id="conteudos-studied">0</p>
+                <p class="text-xs text-gray-500">de 50 conteúdos</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="book" class="w-6 h-6 text-blue-600"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Simulados Concluídos</p>
+                <p class="text-2xl font-bold text-gray-900" id="simulados-completed">0</p>
+                <p class="text-xs text-gray-500">de 10 simulados</p>
+            </div>
+            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Taxa de Acerto</p>
+                <p class="text-2xl font-bold text-gray-900" id="accuracy-rate">0%</p>
+                <p class="text-xs text-gray-500">média geral</p>
+            </div>
+            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="target" class="w-6 h-6 text-purple-600"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Tempo de Estudo</p>
+                <p class="text-2xl font-bold text-gray-900" id="study-time">0h</p>
+                <p class="text-xs text-gray-500">esta semana</p>
+            </div>
+            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="clock" class="w-6 h-6 text-orange-600"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Performance Chart -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Desempenho nos Simulados</h3>
+        <div class="h-64 flex items-center justify-center">
+            <div class="text-center">
+                <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="bar-chart-3" class="w-12 h-12 text-gray-400"></i>
+                </div>
+                <p class="text-gray-500">Gráfico de desempenho será implementado</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Study Progress Chart -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Progresso de Estudos</h3>
+        <div class="h-64 flex items-center justify-center">
+            <div class="text-center">
+                <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="trending-up" class="w-12 h-12 text-gray-400"></i>
+                </div>
+                <p class="text-gray-500">Gráfico de progresso será implementado</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="bg-white rounded-xl p-6 shadow-sm border mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Atividade Recente</h3>
+    <div id="recent-activity" class="space-y-4">
+        <!-- Activity items will be loaded here -->
+    </div>
+</div>
+
+<!-- Study Goals -->
+<div class="bg-white rounded-xl p-6 shadow-sm border">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Metas de Estudo</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="book-open" class="w-8 h-8 text-blue-600"></i>
+            </div>
+            <h4 class="font-semibold text-gray-900 mb-1">Conteúdos por Semana</h4>
+            <p class="text-2xl font-bold text-blue-600" id="weekly-content-goal">5</p>
+            <p class="text-sm text-gray-500">conteúdos estudados</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="clipboard-check" class="w-8 h-8 text-green-600"></i>
+            </div>
+            <h4 class="font-semibold text-gray-900 mb-1">Simulados por Mês</h4>
+            <p class="text-2xl font-bold text-green-600" id="monthly-simulado-goal">2</p>
+            <p class="text-sm text-gray-500">simulados realizados</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="target" class="w-8 h-8 text-purple-600"></i>
+            </div>
+            <h4 class="font-semibold text-gray-900 mb-1">Meta de Acerto</h4>
+            <p class="text-2xl font-bold text-purple-600" id="accuracy-goal">80%</p>
+            <p class="text-sm text-gray-500">taxa de acerto</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function loadReportsData() {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const statsResponse = await fetch('/api/estatisticas', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (statsResponse.ok) {
+                const stats = await statsResponse.json();
+                
+                document.getElementById('conteudos-studied').textContent = Math.min(stats.usuario.conteudos, 50);
+                document.getElementById('simulados-completed').textContent = Math.min(stats.usuario.simulados, 10);
+                
+                const mockAccuracy = Math.floor(Math.random() * 30) + 60;
+                document.getElementById('accuracy-rate').textContent = mockAccuracy + '%';
+                
+                const mockStudyTime = Math.floor(Math.random() * 20) + 5;
+                document.getElementById('study-time').textContent = mockStudyTime + 'h';
+            }
+            
+            loadRecentActivity();
+            
+        } catch (error) {
+        }
+    }
+    
+    async function loadRecentActivity() {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const contentsResponse = await fetch('/api/conteudos', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (contentsResponse.ok) {
+                const contents = await contentsResponse.json();
+                const recentContents = contents.slice(0, 3);
+                
+                const simuladosResponse = await fetch('/api/simulados', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                let recentSimulados = [];
+                if (simuladosResponse.ok) {
+                    const simulados = await simuladosResponse.json();
+                    recentSimulados = simulados.slice(0, 2);
+                }
+                
+                const activities = [
+                    ...recentContents.map(content => ({
+                        type: 'content',
+                        title: `Novo conteúdo: ${content.nome}`,
+                        time: content.created_at,
+                        icon: 'book',
+                        color: 'blue'
+                    })),
+                    ...recentSimulados.map(simulado => ({
+                        type: 'simulado',
+                        title: `Simulado criado: ${simulado.nome}`,
+                        time: simulado.created_at,
+                        icon: 'clipboard-check',
+                        color: 'green'
+                    }))
+                ].sort((a, b) => new Date(b.time) - new Date(a.time));
+                
+                renderRecentActivity(activities);
+            }
+            
+        } catch (error) {
+        }
+    }
+    
+    function renderRecentActivity(activities) {
+        const container = document.getElementById('recent-activity');
+        
+        if (activities.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="activity" class="w-8 h-8 text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-500">Nenhuma atividade recente</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = activities.map(activity => `
+            <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                <div class="w-10 h-10 bg-${activity.color}-100 rounded-lg flex items-center justify-center">
+                    <i data-lucide="${activity.icon}" class="w-5 h-5 text-${activity.color}-600"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">${activity.title}</p>
+                    <p class="text-xs text-gray-500">${new Date(activity.time).toLocaleString()}</p>
+                </div>
+            </div>
+        `).join('');
+        
+        lucide.createIcons();
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadReportsData);
+</script>
+{% endblock %}

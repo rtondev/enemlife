@@ -1,0 +1,547 @@
+{% extends "dashboard_base.html" %}
+
+{% block page_title %}Simulados{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">Simulados</h2>
+        <p class="text-gray-600">Testes no formato ENEM para sua preparação</p>
+    </div>
+    <button onclick="openCreateModal()" class="btn-primary">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Novo Simulado
+    </button>
+</div>
+
+<!-- Simulados Grid -->
+<div id="simulados-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Simulado cards will be loaded here -->
+</div>
+
+<!-- Empty State -->
+<div id="empty-state" class="hidden text-center py-12">
+    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="clipboard-check" class="w-12 h-12 text-gray-400"></i>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhum simulado encontrado</h3>
+    <p class="text-gray-600 mb-6">Crie seu primeiro simulado para começar a praticar.</p>
+    <button onclick="openCreateModal()" class="btn-primary">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Criar Simulado
+    </button>
+</div>
+
+<!-- Create/Edit Modal -->
+<div id="simulado-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900" id="modal-title">Novo Simulado</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <form id="simulado-form" class="space-y-4">
+                <input type="hidden" id="simulado-id">
+                
+                <div>
+                    <label class="form-label">Nome do Simulado</label>
+                    <input type="text" id="simulado-name" class="form-input" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Descrição</label>
+                    <textarea id="simulado-description" class="form-input" rows="3"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Questions Modal -->
+<div id="questions-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-4xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900" id="questions-modal-title">Gerenciar Questões</h3>
+                <button onclick="closeQuestionsModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Available Questions -->
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-4">Questões Disponíveis</h4>
+                    <div id="available-questions" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Available questions will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Simulado Questions -->
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-4">Questões do Simulado</h4>
+                    <div id="simulado-questions" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Simulado questions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6 pt-4 border-t">
+                <button onclick="closeQuestionsModal()" class="btn-secondary">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Take Simulado Modal -->
+<div id="take-simulado-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-4xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900" id="take-simulado-title">Simulado</h3>
+                <button onclick="closeTakeSimuladoModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="text-center mb-6">
+                <div class="mb-4">
+                    <span class="text-sm text-gray-500">Questão</span>
+                    <span id="current-question-number">1</span>
+                    <span class="text-sm text-gray-500">de</span>
+                    <span id="total-questions">0</span>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-8 mb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4" id="question-text">Pergunta aqui...</h4>
+                    <div id="question-options" class="space-y-3">
+                        <!-- Options will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="flex justify-center space-x-4">
+                    <button onclick="previousQuestion()" class="btn-secondary" id="prev-question-btn">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        Anterior
+                    </button>
+                    <button onclick="nextQuestion()" class="btn-secondary" id="next-question-btn">
+                        Próximo
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="finishSimulado()" class="btn-primary" id="finish-btn">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        Finalizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let allSimulados = [];
+    let allQuestoes = [];
+    let currentSimulado = null;
+    let currentSimuladoQuestoes = [];
+    let currentQuestionIndex = 0;
+    let answers = {};
+    
+    async function loadSimulados() {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch('/api/simulados', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                allSimulados = await response.json();
+                renderSimulados();
+            } else {
+            }
+        } catch (error) {
+        }
+    }
+    
+    async function loadQuestoes() {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch('/api/questoes', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                allQuestoes = await response.json();
+            } else {
+            }
+        } catch (error) {
+        }
+    }
+    
+    function renderSimulados() {
+        const grid = document.getElementById('simulados-grid');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (allSimulados.length === 0) {
+            grid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            return;
+        }
+        
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        
+        grid.innerHTML = allSimulados.map(simulado => `
+            <div class="bg-white rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="clipboard-check" class="w-5 h-5 text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">${simulado.nome}</h3>
+                            <p class="text-sm text-gray-500">Simulado</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="manageQuestions(${simulado.id})" class="text-gray-400 hover:text-blue-600" title="Gerenciar Questões">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="editSimulado(${simulado.id})" class="text-gray-400 hover:text-blue-600">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteSimulado(${simulado.id})" class="text-gray-400 hover:text-red-600">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 text-sm mb-4">${simulado.descricao || 'Sem descrição'}</p>
+                
+                <div class="flex items-center justify-between">
+                    <button onclick="takeSimulado(${simulado.id})" class="btn-primary text-sm">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        Fazer Simulado
+                    </button>
+                    <span class="text-xs text-gray-500">
+                        Criado em ${new Date(simulado.created_at).toLocaleDateString()}
+                    </span>
+                </div>
+            </div>
+        `).join('');
+        
+        lucide.createIcons();
+    }
+    
+    function openCreateModal() {
+        document.getElementById('modal-title').textContent = 'Novo Simulado';
+        document.getElementById('simulado-form').reset();
+        document.getElementById('simulado-id').value = '';
+        document.getElementById('simulado-modal').classList.remove('hidden');
+    }
+    
+    function editSimulado(id) {
+        const simulado = allSimulados.find(s => s.id === id);
+        if (!simulado) return;
+        
+        document.getElementById('modal-title').textContent = 'Editar Simulado';
+        document.getElementById('simulado-id').value = simulado.id;
+        document.getElementById('simulado-name').value = simulado.nome;
+        document.getElementById('simulado-description').value = simulado.descricao || '';
+        document.getElementById('simulado-modal').classList.remove('hidden');
+    }
+    
+    function closeModal() {
+        document.getElementById('simulado-modal').classList.add('hidden');
+    }
+    
+    async function deleteSimulado(id) {
+        if (!confirm('Tem certeza que deseja deletar este simulado?')) return;
+        
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`/api/simulados/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                loadSimulados();
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao deletar simulado');
+        }
+    }
+    
+    async function manageQuestions(simuladoId) {
+        currentSimulado = allSimulados.find(s => s.id === simuladoId);
+        if (!currentSimulado) return;
+        
+        document.getElementById('questions-modal-title').textContent = `Gerenciar Questões - ${currentSimulado.nome}`;
+        
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`/api/simulados/questoes/${simuladoId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                currentSimuladoQuestoes = data.questoes || [];
+                renderQuestionsModal();
+            }
+        } catch (error) {
+        }
+        
+        document.getElementById('questions-modal').classList.remove('hidden');
+    }
+    
+    function renderQuestionsModal() {
+        const availableQuestoes = allQuestoes.filter(q => 
+            !currentSimuladoQuestoes.some(sq => sq.id === q.id)
+        );
+        
+        document.getElementById('available-questions').innerHTML = availableQuestoes.map(questao => `
+            <div class="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">${questao.pergunta.substring(0, 50)}...</p>
+                    <p class="text-xs text-gray-500">Resposta: ${questao.correta}</p>
+                </div>
+                <button onclick="addQuestionToSimulado(${questao.id})" class="text-blue-600 hover:text-blue-700">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                </button>
+            </div>
+        `).join('');
+        
+        document.getElementById('simulado-questions').innerHTML = currentSimuladoQuestoes.map(questao => `
+            <div class="p-3 bg-blue-50 rounded-lg flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">${questao.pergunta.substring(0, 50)}...</p>
+                    <p class="text-xs text-gray-500">Resposta: ${questao.correta}</p>
+                </div>
+                <button onclick="removeQuestionFromSimulado(${questao.id})" class="text-red-600 hover:text-red-700">
+                    <i data-lucide="minus" class="w-4 h-4"></i>
+                </button>
+            </div>
+        `).join('');
+        
+        lucide.createIcons();
+    }
+    
+    async function addQuestionToSimulado(questaoId) {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`/api/simulados/${currentSimulado.id}/adicionar-questao`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ questao_id: questaoId })
+            });
+            
+            if (response.ok) {
+                manageQuestions(currentSimulado.id);
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao adicionar questão');
+        }
+    }
+    
+    async function removeQuestionFromSimulado(questaoId) {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`/api/simulados/${currentSimulado.id}/remover-questao`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ questao_id: questaoId })
+            });
+            
+            if (response.ok) {
+                manageQuestions(currentSimulado.id);
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao remover questão');
+        }
+    }
+    
+    function closeQuestionsModal() {
+        document.getElementById('questions-modal').classList.add('hidden');
+    }
+    
+    async function takeSimulado(simuladoId) {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`/api/simulados/questoes/${simuladoId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                currentSimuladoQuestoes = data.questoes || [];
+                
+                if (currentSimuladoQuestoes.length === 0) {
+                    alert('Este simulado não possui questões. Adicione questões primeiro.');
+                    return;
+                }
+                
+                currentSimulado = data;
+                currentQuestionIndex = 0;
+                answers = {};
+                
+                document.getElementById('take-simulado-title').textContent = data.nome;
+                document.getElementById('total-questions').textContent = currentSimuladoQuestoes.length;
+                
+                showCurrentQuestion();
+                document.getElementById('take-simulado-modal').classList.remove('hidden');
+            }
+        } catch (error) {
+        }
+    }
+    
+    function showCurrentQuestion() {
+        const questao = currentSimuladoQuestoes[currentQuestionIndex];
+        document.getElementById('current-question-number').textContent = currentQuestionIndex + 1;
+        document.getElementById('question-text').textContent = questao.pergunta;
+        
+        const options = ['A', 'B', 'C', 'D', 'E'];
+        document.getElementById('question-options').innerHTML = options.map(option => `
+            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                <input type="radio" name="question-${questao.id}" value="${option}" 
+                       ${answers[questao.id] === option ? 'checked' : ''} class="mr-3">
+                <span class="font-medium">${option})</span>
+                <span class="ml-2">Opção ${option}</span>
+            </label>
+        `).join('');
+        
+        document.getElementById('prev-question-btn').disabled = currentQuestionIndex === 0;
+        document.getElementById('next-question-btn').disabled = currentQuestionIndex === currentSimuladoQuestoes.length - 1;
+    }
+    
+    function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showCurrentQuestion();
+        }
+    }
+    
+    function nextQuestion() {
+        if (currentQuestionIndex < currentSimuladoQuestoes.length - 1) {
+            currentQuestionIndex++;
+            showCurrentQuestion();
+        }
+    }
+    
+    function finishSimulado() {
+        let correct = 0;
+        currentSimuladoQuestoes.forEach(questao => {
+            if (answers[questao.id] === questao.correta) {
+                correct++;
+            }
+        });
+        
+        const score = Math.round((correct / currentSimuladoQuestoes.length) * 100);
+        
+        alert(`Simulado finalizado!\n\nAcertos: ${correct}/${currentSimuladoQuestoes.length}\nPontuação: ${score}%`);
+        
+        closeTakeSimuladoModal();
+    }
+    
+    function closeTakeSimuladoModal() {
+        document.getElementById('take-simulado-modal').classList.add('hidden');
+    }
+    
+    document.getElementById('simulado-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const token = localStorage.getItem('token');
+        const simuladoId = document.getElementById('simulado-id').value;
+        const isEdit = !!simuladoId;
+        
+        const data = {
+            nome: document.getElementById('simulado-name').value,
+            descricao: document.getElementById('simulado-description').value
+        };
+        
+        try {
+            const url = isEdit ? `/api/simulados/${simuladoId}` : '/api/simulados';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                closeModal();
+                loadSimulados();
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao salvar simulado');
+        }
+    });
+    
+    document.addEventListener('change', function(e) {
+        if (e.target.name && e.target.name.startsWith('question-')) {
+            const questaoId = parseInt(e.target.name.replace('question-', ''));
+            answers[questaoId] = e.target.value;
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSimulados();
+        loadQuestoes();
+    });
+</script>
+{% endblock %}

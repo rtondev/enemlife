@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ENEMPRO{% endblock %}
+
+{% block content %}
+<!-- Login Form -->
+<div class="min-h-screen flex items-center justify-center py-12">
+    <div class="w-full max-w-md mx-auto px-4">
+        <div class="bg-white rounded-2xl p-8">
+            <!-- Greeting -->
+            <div class="flex items-center mb-8">
+                <img src="{{ url_for('static', filename='assets/imgs/icon.svg') }}" alt="Icon" class="w-5 h-5 mr-3">
+                <h1 class="text-sm font-semibold text-gray-900">Olá novamente 👋</h1>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-6">
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="form-label">
+                        Seu e-mail
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email"
+                        placeholder="Digite seu e-mail aqui"
+                        class="form-input"
+                        required
+                    >
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="form-label">
+                        Sua senha
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        placeholder="Digite sua senha aqui"
+                        class="form-input"
+                        required
+                    >
+                </div>
+
+                <!-- Forgot Password Link -->
+                <div class="text-right mb-4">
+                    <a href="{{ url_for('recuperar_senha_page') }}" class="text-sm text-blue-600 hover:text-blue-700">
+                        Esqueceu sua senha?
+                    </a>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-3">
+                    <a href="{{ url_for('cadastro_page') }}" class="btn-secondary">
+                        Registrar
+                    </a>
+                    <button 
+                        type="submit" 
+                        class="btn-primary"
+                    >
+                        Acessar
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    senha: password
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user_id', data.user_id);
+                localStorage.setItem('apelido', data.apelido);
+                
+                window.location.href = '/dashboard';
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        } catch (error) {
+            alert('Erro ao fazer login. Tente novamente.');
+        }
+    });
+</script>
+{% endblock %}

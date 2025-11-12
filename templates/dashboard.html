@@ -1,0 +1,203 @@
+{% extends "dashboard_base.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-2">Bem-vindo de volta!</h2>
+    <p class="text-gray-600">Acompanhe seu progresso e continue seus estudos.</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Conteúdos</p>
+                <p class="text-2xl font-bold text-gray-900" id="conteudos-count">0</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="book" class="w-6 h-6 text-blue-600"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Flashcards</p>
+                <p class="text-2xl font-bold text-gray-900" id="flashcards-count">0</p>
+            </div>
+            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="zap" class="w-6 h-6 text-purple-600"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Simulados</p>
+                <p class="text-2xl font-bold text-gray-900" id="simulados-count">0</p>
+            </div>
+            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="clipboard-check" class="w-6 h-6 text-green-600"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Questões</p>
+                <p class="text-2xl font-bold text-gray-900" id="questoes-count">0</p>
+            </div>
+            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="help-circle" class="w-6 h-6 text-orange-600"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Recent Content -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Conteúdos Recentes</h3>
+            <a href="{{ url_for('conteudos_page') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                Ver todos
+            </a>
+        </div>
+        <div id="recent-content" class="space-y-3">
+            <!-- Content will be loaded here -->
+        </div>
+    </div>
+    
+    <!-- Recent Simulados -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Simulados Recentes</h3>
+            <a href="{{ url_for('simulados_page') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                Ver todos
+            </a>
+        </div>
+        <div id="recent-simulados" class="space-y-3">
+            <!-- Simulados will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Study Progress -->
+<div class="bg-white rounded-xl p-6 shadow-sm border">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Progresso de Estudos</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="book-open" class="w-8 h-8 text-blue-600"></i>
+            </div>
+            <h4 class="font-semibold text-gray-900 mb-1">Conteúdos Estudados</h4>
+            <p class="text-2xl font-bold text-blue-600" id="conteudos-studied">0</p>
+            <p class="text-sm text-gray-500">de 50 conteúdos</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
+            </div>
+            <h4 class="font-semibold text-gray-900 mb-1">Simulados Concluídos</h4>
+            <p class="text-2xl font-bold text-green-600" id="simulados-completed">0</p>
+            <p class="text-sm text-gray-500">de 10 simulados</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="target" class="w-8 h-8 text-purple-600"></i>
+            </div>
+            <h4 class="font-semibold text-gray-900 mb-1">Taxa de Acerto</h4>
+            <p class="text-2xl font-bold text-purple-600" id="accuracy-rate">0%</p>
+            <p class="text-sm text-gray-500">média geral</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function loadDashboardData() {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const statsResponse = await fetch('/api/estatisticas', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (statsResponse.ok) {
+                const stats = await statsResponse.json();
+                
+                document.getElementById('conteudos-count').textContent = stats.usuario.conteudos;
+                document.getElementById('flashcards-count').textContent = stats.usuario.flashcards;
+                document.getElementById('simulados-count').textContent = stats.usuario.simulados;
+                document.getElementById('questoes-count').textContent = stats.usuario.questoes;
+            }
+            
+            const contentResponse = await fetch('/api/conteudos', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (contentResponse.ok) {
+                const contents = await contentResponse.json();
+                const recentContent = contents.slice(0, 3);
+                
+                const contentContainer = document.getElementById('recent-content');
+                contentContainer.innerHTML = recentContent.map(content => `
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="book" class="w-4 h-4 text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">${content.nome}</p>
+                            <p class="text-sm text-gray-500">${content.tipo}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            const simuladosResponse = await fetch('/api/simulados', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (simuladosResponse.ok) {
+                const simulados = await simuladosResponse.json();
+                const recentSimulados = simulados.slice(0, 3);
+                
+                const simuladosContainer = document.getElementById('recent-simulados');
+                simuladosContainer.innerHTML = recentSimulados.map(simulado => `
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="clipboard-check" class="w-4 h-4 text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">${simulado.nome}</p>
+                            <p class="text-sm text-gray-500">${new Date(simulado.created_at).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            lucide.createIcons();
+            
+        } catch (error) {
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadDashboardData);
+</script>
+{% endblock %}

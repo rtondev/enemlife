@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard - ENEMPRO{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="bg-white w-64 shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out fixed lg:static z-30">
+            <div class="p-6">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2 mb-8">
+                    <img src="{{ url_for('static', filename='assets/imgs/logo.svg') }}" alt="ENEMPRO Logo" class="h-8">
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="space-y-2">
+                    <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        Dashboard
+                    </a>
+                    
+                    <a href="{{ url_for('conteudos_page') }}" class="nav-item {% if request.endpoint == 'conteudos_page' %}active{% endif %}">
+                        <i data-lucide="book" class="w-5 h-5"></i>
+                        Conteúdos
+                    </a>
+                    
+                    <a href="{{ url_for('flashcards_page') }}" class="nav-item {% if request.endpoint == 'flashcards_page' %}active{% endif %}">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                        Flashcards
+                    </a>
+                    
+                    <a href="{{ url_for('simulados_page') }}" class="nav-item {% if request.endpoint == 'simulados_page' %}active{% endif %}">
+                        <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                        Simulados
+                    </a>
+                    
+                    <a href="{{ url_for('questoes_page') }}" class="nav-item {% if request.endpoint == 'questoes_page' %}active{% endif %}">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        Questões
+                    </a>
+                    
+                    <a href="{{ url_for('relatorios_page') }}" class="nav-item {% if request.endpoint == 'relatorios_page' %}active{% endif %}">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                        Relatórios
+                    </a>
+                    
+                    <a href="{{ url_for('perfil_page') }}" class="nav-item {% if request.endpoint == 'perfil_page' %}active{% endif %}">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                        Meu Perfil
+                    </a>
+                    
+                    <!-- Admin Section -->
+                    <div id="admin-section" class="hidden">
+                        <div class="border-t border-gray-200 my-4"></div>
+                        <a href="{{ url_for('admin_page') }}" class="nav-item {% if request.endpoint == 'admin_page' %}active{% endif %}">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            Administração
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            
+            <!-- User Info -->
+            <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900" id="user-name">Usuário</p>
+                        <p class="text-xs text-gray-500" id="user-role">Estudante</p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="w-full mt-3 text-left text-sm text-gray-500 hover:text-red-600 transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i>
+                    Sair
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Bar -->
+            <header class="bg-white shadow-sm border-b px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <!-- Mobile menu button -->
+                        <button id="mobile-menu-button" class="lg:hidden text-gray-600 hover:text-gray-900">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                        
+                        <h1 class="text-xl font-semibold text-gray-900">{% block page_title %}Dashboard{% endblock %}</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Notifications -->
+                        <button class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                        </button>
+                        
+                        <!-- Profile -->
+                        <div class="relative">
+                            <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                                </div>
+                                <span class="text-sm font-medium" id="user-name-top">Usuário</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden"></div>
+
+    <script>
+        lucide.createIcons();
+        
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        });
+        
+        document.getElementById('mobile-overlay').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+        
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('user_id');
+            const apelido = localStorage.getItem('apelido');
+            
+            if (!token || !userId) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            document.getElementById('user-name').textContent = apelido || 'Usuário';
+            document.getElementById('user-name-top').textContent = apelido || 'Usuário';
+            
+            fetch('/api/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_admin) {
+                    document.getElementById('admin-section').classList.remove('hidden');
+                    document.getElementById('user-role').textContent = 'Administrador';
+                }
+            })
+            .catch(error => {
+            });
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('apelido');
+            window.location.href = '/';
+        }
+        
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

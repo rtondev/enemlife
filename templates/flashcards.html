@@ -1,0 +1,377 @@
+{% extends "dashboard_base.html" %}
+
+{% block page_title %}Flashcards{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">Flashcards</h2>
+        <p class="text-gray-600">Sistema inteligente de memorização</p>
+    </div>
+    <button onclick="openCreateModal()" class="btn-primary">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Novo Flashcard
+    </button>
+</div>
+
+<!-- Study Mode Toggle -->
+<div class="bg-white rounded-xl p-6 shadow-sm border mb-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900">Modo de Estudo</h3>
+            <p class="text-gray-600">Pratique com seus flashcards</p>
+        </div>
+        <button onclick="startStudyMode()" class="btn-primary">
+            <i data-lucide="play" class="w-4 h-4"></i>
+            Iniciar Estudo
+        </button>
+    </div>
+</div>
+
+<!-- Flashcards Grid -->
+<div id="flashcards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Flashcard cards will be loaded here -->
+</div>
+
+<!-- Empty State -->
+<div id="empty-state" class="hidden text-center py-12">
+    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="zap" class="w-12 h-12 text-gray-400"></i>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhum flashcard encontrado</h3>
+    <p class="text-gray-600 mb-6">Crie seu primeiro flashcard para começar a estudar.</p>
+    <button onclick="openCreateModal()" class="btn-primary">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Criar Flashcard
+    </button>
+</div>
+
+<!-- Study Mode Modal -->
+<div id="study-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl p-8 w-full max-w-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Modo de Estudo</h3>
+                <button onclick="closeStudyModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <div class="mb-4">
+                    <span class="text-sm text-gray-500">Flashcard</span>
+                    <span id="current-card-number">1</span>
+                    <span class="text-sm text-gray-500">de</span>
+                    <span id="total-cards">0</span>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-8 mb-6 min-h-64 flex items-center justify-center">
+                    <div id="card-content" class="text-center">
+                        <h4 class="text-xl font-semibold text-gray-900 mb-4" id="card-title">Título do Flashcard</h4>
+                        <p class="text-gray-600" id="card-description">Descrição do flashcard...</p>
+                        <div id="card-links" class="mt-4 hidden">
+                            <!-- Links will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center space-x-4">
+                    <button onclick="previousCard()" class="btn-secondary" id="prev-btn">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        Anterior
+                    </button>
+                    <button onclick="flipCard()" class="btn-primary" id="flip-btn">
+                        <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+                        Virar
+                    </button>
+                    <button onclick="nextCard()" class="btn-secondary" id="next-btn">
+                        Próximo
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div id="flashcard-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900" id="modal-title">Novo Flashcard</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <form id="flashcard-form" class="space-y-4">
+                <input type="hidden" id="flashcard-id">
+                
+                <div>
+                    <label class="form-label">Nome do Flashcard</label>
+                    <input type="text" id="flashcard-name" class="form-input" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Descrição</label>
+                    <textarea id="flashcard-description" class="form-input" rows="4" required></textarea>
+                </div>
+                
+                <div>
+                    <label class="form-label">Links (um por linha)</label>
+                    <textarea id="flashcard-links" class="form-input" rows="3" placeholder="https://exemplo.com&#10;https://outro-exemplo.com"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let allFlashcards = [];
+    let studyFlashcards = [];
+    let currentCardIndex = 0;
+    let isFlipped = false;
+    
+    async function loadFlashcards() {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch('/api/flashcards', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                allFlashcards = await response.json();
+                renderFlashcards();
+            } else {
+            }
+        } catch (error) {
+        }
+    }
+    
+    function renderFlashcards() {
+        const grid = document.getElementById('flashcards-grid');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (allFlashcards.length === 0) {
+            grid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            return;
+        }
+        
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        
+        grid.innerHTML = allFlashcards.map(flashcard => `
+            <div class="bg-white rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="zap" class="w-5 h-5 text-purple-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">${flashcard.nome}</h3>
+                            <p class="text-sm text-gray-500">Flashcard</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="editFlashcard(${flashcard.id})" class="text-gray-400 hover:text-blue-600">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteFlashcard(${flashcard.id})" class="text-gray-400 hover:text-red-600">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 text-sm mb-4">${flashcard.descricao || 'Sem descrição'}</p>
+                
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <p class="text-xs text-gray-500">
+                        Criado em ${new Date(flashcard.created_at).toLocaleDateString()}
+                    </p>
+                </div>
+            </div>
+        `).join('');
+        
+        lucide.createIcons();
+    }
+    
+    function startStudyMode() {
+        if (allFlashcards.length === 0) {
+            alert('Crie pelo menos um flashcard para começar a estudar.');
+            return;
+        }
+        
+        studyFlashcards = [...allFlashcards];
+        currentCardIndex = 0;
+        isFlipped = false;
+        
+        document.getElementById('total-cards').textContent = studyFlashcards.length;
+        showCurrentCard();
+        document.getElementById('study-modal').classList.remove('hidden');
+    }
+    
+    function showCurrentCard() {
+        const card = studyFlashcards[currentCardIndex];
+        document.getElementById('current-card-number').textContent = currentCardIndex + 1;
+        document.getElementById('card-title').textContent = card.nome;
+        document.getElementById('card-description').textContent = card.descricao || 'Sem descrição';
+        
+        const linksContainer = document.getElementById('card-links');
+        if (card.links && card.links.length > 0) {
+            linksContainer.innerHTML = card.links.map(link => `
+                <a href="${link}" target="_blank" class="inline-block bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-sm mr-2 mb-2">
+                    <i data-lucide="external-link" class="w-3 h-3 inline mr-1"></i>
+                    Link
+                </a>
+            `).join('');
+            linksContainer.classList.remove('hidden');
+        } else {
+            linksContainer.classList.add('hidden');
+        }
+        
+        document.getElementById('prev-btn').disabled = currentCardIndex === 0;
+        document.getElementById('next-btn').disabled = currentCardIndex === studyFlashcards.length - 1;
+        
+        lucide.createIcons();
+    }
+    
+    function flipCard() {
+        isFlipped = !isFlipped;
+        const flipBtn = document.getElementById('flip-btn');
+        if (isFlipped) {
+            flipBtn.innerHTML = '<i data-lucide="eye" class="w-4 h-4"></i> Ver Frente';
+        } else {
+            flipBtn.innerHTML = '<i data-lucide="rotate-cw" class="w-4 h-4"></i> Virar';
+        }
+    }
+    
+    function previousCard() {
+        if (currentCardIndex > 0) {
+            currentCardIndex--;
+            isFlipped = false;
+            showCurrentCard();
+        }
+    }
+    
+    function nextCard() {
+        if (currentCardIndex < studyFlashcards.length - 1) {
+            currentCardIndex++;
+            isFlipped = false;
+            showCurrentCard();
+        }
+    }
+    
+    function closeStudyModal() {
+        document.getElementById('study-modal').classList.add('hidden');
+    }
+    
+    function openCreateModal() {
+        document.getElementById('modal-title').textContent = 'Novo Flashcard';
+        document.getElementById('flashcard-form').reset();
+        document.getElementById('flashcard-id').value = '';
+        document.getElementById('flashcard-modal').classList.remove('hidden');
+    }
+    
+    function editFlashcard(id) {
+        const flashcard = allFlashcards.find(f => f.id === id);
+        if (!flashcard) return;
+        
+        document.getElementById('modal-title').textContent = 'Editar Flashcard';
+        document.getElementById('flashcard-id').value = flashcard.id;
+        document.getElementById('flashcard-name').value = flashcard.nome;
+        document.getElementById('flashcard-description').value = flashcard.descricao || '';
+        document.getElementById('flashcard-links').value = flashcard.links ? flashcard.links.join('\n') : '';
+        document.getElementById('flashcard-modal').classList.remove('hidden');
+    }
+    
+    function closeModal() {
+        document.getElementById('flashcard-modal').classList.add('hidden');
+    }
+    
+    async function deleteFlashcard(id) {
+        if (!confirm('Tem certeza que deseja deletar este flashcard?')) return;
+        
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`/api/flashcards/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                loadFlashcards();
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao deletar flashcard');
+        }
+    }
+    
+    document.getElementById('flashcard-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const token = localStorage.getItem('token');
+        const flashcardId = document.getElementById('flashcard-id').value;
+        const isEdit = !!flashcardId;
+        
+        const links = document.getElementById('flashcard-links').value
+            .split('\n')
+            .map(link => link.trim())
+            .filter(link => link);
+        
+        const data = {
+            nome: document.getElementById('flashcard-name').value,
+            descricao: document.getElementById('flashcard-description').value,
+            links: links
+        };
+        
+        try {
+            const url = isEdit ? `/api/flashcards/${flashcardId}` : '/api/flashcards';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                closeModal();
+                loadFlashcards();
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao salvar flashcard');
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', loadFlashcards);
+</script>
+{% endblock %}

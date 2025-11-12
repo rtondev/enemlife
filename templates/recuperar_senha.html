@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Recuperar Senha - ENEMPRO{% endblock %}
+
+{% block content %}
+<!-- Recovery Form -->
+<div class="min-h-screen flex items-center justify-center py-12">
+    <div class="w-full max-w-md mx-auto px-4">
+        <div class="bg-white rounded-2xl p-8">
+            <!-- Header -->
+            <div class="flex items-center mb-8">
+                <img src="{{ url_for('static', filename='assets/imgs/icon.svg') }}" alt="Icon" class="w-5 h-5 mr-3">
+                <h1 class="text-sm font-semibold text-gray-900">Recuperar Senha</h1>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div id="step-1-indicator" class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+                        <div class="w-16 h-1 bg-blue-600 mx-2" id="step-1-line"></div>
+                        <div id="step-2-indicator" class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">2</div>
+                    </div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span id="step-1-text">Verificar Dados</span>
+                    <span id="step-2-text">Nova Senha</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Verify Data -->
+            <div id="step-1" class="space-y-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Verificar Dados</h2>
+                    <p class="text-sm text-gray-600">Digite seu email e telefone para verificar sua identidade</p>
+                </div>
+
+                <form id="verify-form" class="space-y-4">
+                    <div>
+                        <label for="email" class="form-label">
+                            E-mail cadastrado
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email"
+                            placeholder="seu@email.com"
+                            class="form-input"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="telefone" class="form-label">
+                            Telefone cadastrado
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="telefone" 
+                            name="telefone"
+                            placeholder="(84) 99999-9999"
+                            class="form-input"
+                            required
+                            maxlength="15"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary w-full">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        Verificar Dados
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: New Password -->
+            <div id="step-2" class="space-y-6 hidden">
+                <div class="text-center mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Nova Senha</h2>
+                    <p class="text-sm text-gray-600">Digite sua nova senha</p>
+                </div>
+
+                <form id="reset-form" class="space-y-4">
+                    <input type="hidden" id="verified-email">
+                    
+                    <div>
+                        <label for="nova_senha" class="form-label">
+                            Nova Senha
+                        </label>
+                        <input 
+                            type="password" 
+                            id="nova_senha" 
+                            name="nova_senha"
+                            placeholder="Mínimo 8 caracteres"
+                            class="form-input"
+                            required
+                            minlength="8"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="confirmar_senha" class="form-label">
+                            Confirmar Nova Senha
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirmar_senha" 
+                            name="confirmar_senha"
+                            placeholder="Digite a senha novamente"
+                            class="form-input"
+                            required
+                            minlength="8"
+                        >
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="goBackToStep1()" class="btn-secondary flex-1">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            Voltar
+                        </button>
+                        <button type="submit" class="btn-primary flex-1">
+                            <i data-lucide="key" class="w-4 h-4"></i>
+                            Redefinir Senha
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Success Message -->
+            <div id="success-message" class="hidden text-center py-8">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Senha Redefinida!</h3>
+                <p class="text-sm text-gray-600 mb-6">Sua senha foi alterada com sucesso. Você já pode fazer login.</p>
+                <a href="{{ url_for('login_page') }}" class="btn-primary">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    Fazer Login
+                </a>
+            </div>
+
+            <!-- Back to Login -->
+            <div class="mt-6 text-center">
+                <a href="{{ url_for('login_page') }}" class="text-sm text-gray-600 hover:text-blue-600">
+                    <i data-lucide="arrow-left" class="w-4 h-4 inline mr-1"></i>
+                    Voltar ao Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let currentStep = 1;
+    let verifiedEmail = '';
+
+    document.getElementById('verify-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const telefone = document.getElementById('telefone').value;
+        
+        try {
+            const response = await fetch('/api/recuperar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    telefone: telefone
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                verifiedEmail = email;
+                document.getElementById('verified-email').value = email;
+                goToStep2();
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        } catch (error) {
+            alert('Erro ao verificar dados. Tente novamente.');
+        }
+    });
+
+    document.getElementById('reset-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const novaSenha = document.getElementById('nova_senha').value;
+        const confirmarSenha = document.getElementById('confirmar_senha').value;
+        
+        if (novaSenha !== confirmarSenha) {
+            alert('As senhas não coincidem!');
+            return;
+        }
+        
+        if (novaSenha.length < 8) {
+            alert('A senha deve ter pelo menos 8 caracteres.');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/recuperar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: verifiedEmail,
+                    nova_senha: novaSenha
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showSuccessMessage();
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        } catch (error) {
+            alert('Erro ao redefinir senha. Tente novamente.');
+        }
+    });
+
+    function goToStep2() {
+        currentStep = 2;
+        
+        document.getElementById('step-1-indicator').classList.remove('bg-blue-600', 'text-white');
+        document.getElementById('step-1-indicator').classList.add('bg-green-600', 'text-white');
+        document.getElementById('step-1-line').classList.remove('bg-blue-600');
+        document.getElementById('step-1-line').classList.add('bg-green-600');
+        document.getElementById('step-2-indicator').classList.remove('bg-gray-300', 'text-gray-600');
+        document.getElementById('step-2-indicator').classList.add('bg-blue-600', 'text-white');
+        
+        document.getElementById('step-1-text').classList.add('text-green-600');
+        document.getElementById('step-2-text').classList.add('text-blue-600');
+        
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.remove('hidden');
+    }
+
+    function goBackToStep1() {
+        currentStep = 1;
+        
+        document.getElementById('step-1-indicator').classList.add('bg-blue-600', 'text-white');
+        document.getElementById('step-1-indicator').classList.remove('bg-green-600');
+        document.getElementById('step-1-line').classList.add('bg-blue-600');
+        document.getElementById('step-1-line').classList.remove('bg-green-600');
+        document.getElementById('step-2-indicator').classList.add('bg-gray-300', 'text-gray-600');
+        document.getElementById('step-2-indicator').classList.remove('bg-blue-600', 'text-white');
+        
+        document.getElementById('step-1-text').classList.remove('text-green-600');
+        document.getElementById('step-2-text').classList.remove('text-blue-600');
+        
+        document.getElementById('step-1').classList.remove('hidden');
+        document.getElementById('step-2').classList.add('hidden');
+    }
+
+    function showSuccessMessage() {
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('success-message').classList.remove('hidden');
+    }
+
+    document.getElementById('telefone').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
+        }
+        if (value.length >= 10) {
+            value = value.substring(0, 10) + '-' + value.substring(10, 14);
+        }
+        e.target.value = value;
+    });
+    
+    document.getElementById('confirmar_senha').addEventListener('input', function() {
+        const novaSenha = document.getElementById('nova_senha').value;
+        const confirmarSenha = this.value;
+        
+        if (confirmarSenha && novaSenha !== confirmarSenha) {
+            this.setCustomValidity('As senhas não coincidem');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+</script>
+{% endblock %}

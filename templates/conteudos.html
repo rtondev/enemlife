@@ -1,0 +1,312 @@
+{% extends "dashboard_base.html" %}
+
+{% block page_title %}Biblioteca de Conteúdos{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">Biblioteca de Conteúdos</h2>
+        <p class="text-gray-600">Organize e acesse seus materiais de estudo</p>
+    </div>
+    <button onclick="openCreateModal()" class="btn-primary">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Novo Conteúdo
+    </button>
+</div>
+
+<!-- Filters -->
+<div class="bg-white rounded-xl p-6 shadow-sm border mb-6">
+    <div class="flex flex-wrap items-center gap-4">
+        <div class="flex-1 min-w-64">
+            <input 
+                type="text" 
+                id="search-input"
+                placeholder="Buscar conteúdos..." 
+                class="form-input"
+            >
+        </div>
+        <select id="type-filter" class="form-input w-48">
+            <option value="">Todos os tipos</option>
+            <option value="video">Vídeo</option>
+            <option value="artigo">Artigo</option>
+            <option value="documento">Documento</option>
+            <option value="orientacao">Orientação</option>
+        </select>
+        <button onclick="applyFilters()" class="btn-secondary">
+            <i data-lucide="search" class="w-4 h-4"></i>
+            Filtrar
+        </button>
+    </div>
+</div>
+
+<!-- Content Grid -->
+<div id="content-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Content cards will be loaded here -->
+</div>
+
+<!-- Empty State -->
+<div id="empty-state" class="hidden text-center py-12">
+    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="book" class="w-12 h-12 text-gray-400"></i>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhum conteúdo encontrado</h3>
+    <p class="text-gray-600 mb-6">Comece criando seu primeiro conteúdo de estudo.</p>
+    <button onclick="openCreateModal()" class="btn-primary">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Criar Conteúdo
+    </button>
+</div>
+
+<!-- Create/Edit Modal -->
+<div id="content-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900" id="modal-title">Novo Conteúdo</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <form id="content-form" class="space-y-4">
+                <input type="hidden" id="content-id">
+                
+                <div>
+                    <label class="form-label">Nome do Conteúdo</label>
+                    <input type="text" id="content-name" class="form-input" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Tipo</label>
+                    <select id="content-type" class="form-input" required>
+                        <option value="">Selecione o tipo</option>
+                        <option value="video">Vídeo</option>
+                        <option value="artigo">Artigo</option>
+                        <option value="documento">Documento</option>
+                        <option value="orientacao">Orientação</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="form-label">Descrição</label>
+                    <textarea id="content-description" class="form-input" rows="3"></textarea>
+                </div>
+                
+                <div>
+                    <label class="form-label">Link</label>
+                    <input type="url" id="content-link" class="form-input" placeholder="https://...">
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let allContents = [];
+    let filteredContents = [];
+    
+    async function loadContents() {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch('/api/conteudos', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                allContents = await response.json();
+                filteredContents = [...allContents];
+                renderContents();
+            } else {
+            }
+        } catch (error) {
+        }
+    }
+    
+    function renderContents() {
+        const grid = document.getElementById('content-grid');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (filteredContents.length === 0) {
+            grid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            return;
+        }
+        
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        
+        grid.innerHTML = filteredContents.map(content => `
+            <div class="bg-white rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="${getTypeIcon(content.tipo)}" class="w-5 h-5 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">${content.nome}</h3>
+                            <p class="text-sm text-gray-500 capitalize">${content.tipo}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="editContent(${content.id})" class="text-gray-400 hover:text-blue-600">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteContent(${content.id})" class="text-gray-400 hover:text-red-600">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 text-sm mb-4">${content.descricao || 'Sem descrição'}</p>
+                
+                ${content.link ? `
+                    <a href="${content.link}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+                        Acessar Link
+                    </a>
+                ` : ''}
+                
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <p class="text-xs text-gray-500">
+                        Criado em ${new Date(content.created_at).toLocaleDateString()}
+                    </p>
+                </div>
+            </div>
+        `).join('');
+        
+        lucide.createIcons();
+    }
+    
+    function getTypeIcon(type) {
+        const icons = {
+            'video': 'play-circle',
+            'artigo': 'file-text',
+            'documento': 'file',
+            'orientacao': 'info'
+        };
+        return icons[type] || 'book';
+    }
+    
+    function applyFilters() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const typeFilter = document.getElementById('type-filter').value;
+        
+        filteredContents = allContents.filter(content => {
+            const matchesSearch = content.nome.toLowerCase().includes(searchTerm) ||
+                                (content.descricao && content.descricao.toLowerCase().includes(searchTerm));
+            const matchesType = !typeFilter || content.tipo === typeFilter;
+            
+            return matchesSearch && matchesType;
+        });
+        
+        renderContents();
+    }
+    
+    function openCreateModal() {
+        document.getElementById('modal-title').textContent = 'Novo Conteúdo';
+        document.getElementById('content-form').reset();
+        document.getElementById('content-id').value = '';
+        document.getElementById('content-modal').classList.remove('hidden');
+    }
+    
+    function editContent(id) {
+        const content = allContents.find(c => c.id === id);
+        if (!content) return;
+        
+        document.getElementById('modal-title').textContent = 'Editar Conteúdo';
+        document.getElementById('content-id').value = content.id;
+        document.getElementById('content-name').value = content.nome;
+        document.getElementById('content-type').value = content.tipo;
+        document.getElementById('content-description').value = content.descricao || '';
+        document.getElementById('content-link').value = content.link || '';
+        document.getElementById('content-modal').classList.remove('hidden');
+    }
+    
+    function closeModal() {
+        document.getElementById('content-modal').classList.add('hidden');
+    }
+    
+    async function deleteContent(id) {
+        if (!confirm('Tem certeza que deseja deletar este conteúdo?')) return;
+        
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`/api/conteudos/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                loadContents();
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao deletar conteúdo');
+        }
+    }
+    
+    document.getElementById('content-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const token = localStorage.getItem('token');
+        const contentId = document.getElementById('content-id').value;
+        const isEdit = !!contentId;
+        
+        const data = {
+            nome: document.getElementById('content-name').value,
+            tipo: document.getElementById('content-type').value,
+            descricao: document.getElementById('content-description').value,
+            link: document.getElementById('content-link').value
+        };
+        
+        try {
+            const url = isEdit ? `/api/conteudos/${contentId}` : '/api/conteudos';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                closeModal();
+                loadContents();
+            } else {
+                const error = await response.json();
+                alert('Erro: ' + error.error);
+            }
+        } catch (error) {
+            alert('Erro ao salvar conteúdo');
+        }
+    });
+    
+    document.getElementById('search-input').addEventListener('input', applyFilters);
+    document.getElementById('type-filter').addEventListener('change', applyFilters);
+    
+    document.addEventListener('DOMContentLoaded', loadContents);
+</script>
+{% endblock %}
