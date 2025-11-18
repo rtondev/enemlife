@@ -29,11 +29,7 @@ O ENEMPRO é uma plataforma completa de estudos que permite aos usuários:
 
 ### Passos para Instalação
 
-1. Clone o repositório:
-```bash
-git clone https://gitlab.com/seu-usuario/enempro.git
-cd enempro
-```
+
 
 2. Crie um ambiente virtual (recomendado):
 ```bash
