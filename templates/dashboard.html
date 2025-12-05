@@ -3,58 +3,58 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<!-- Welcome Section -->
+<!-- Header -->
 <div class="mb-8">
-    <h2 class="text-2xl font-bold text-gray-900 mb-2">Bem-vindo de volta!</h2>
-    <p class="text-gray-600">Acompanhe seu progresso e continue seus estudos.</p>
+    <h2 class="text-2xl font-bold text-gray-900">Dashboard</h2>
+    <p class="text-gray-600">Acompanhe seu progresso e continue seus estudos</p>
 </div>
 
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Conteúdos</p>
                 <p class="text-2xl font-bold text-gray-900" id="conteudos-count">0</p>
             </div>
-            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="book" class="w-6 h-6 text-blue-600"></i>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="book" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Flashcards</p>
                 <p class="text-2xl font-bold text-gray-900" id="flashcards-count">0</p>
             </div>
-            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="zap" class="w-6 h-6 text-purple-600"></i>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="zap" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Simulados</p>
                 <p class="text-2xl font-bold text-gray-900" id="simulados-count">0</p>
             </div>
-            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="clipboard-check" class="w-6 h-6 text-green-600"></i>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="clipboard-check" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Questões</p>
                 <p class="text-2xl font-bold text-gray-900" id="questoes-count">0</p>
             </div>
-            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="help-circle" class="w-6 h-6 text-orange-600"></i>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="help-circle" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
@@ -63,10 +63,10 @@
 <!-- Quick Actions -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
     <!-- Recent Content -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Conteúdos Recentes</h3>
-            <a href="{{ url_for('conteudos_page') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            <a href="{{ url_for('conteudos_page') }}" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
                 Ver todos
             </a>
         </div>
@@ -76,10 +76,10 @@
     </div>
     
     <!-- Recent Simulados -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Simulados Recentes</h3>
-            <a href="{{ url_for('simulados_page') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            <a href="{{ url_for('simulados_page') }}" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
                 Ver todos
             </a>
         </div>
@@ -90,33 +90,33 @@
 </div>
 
 <!-- Study Progress -->
-<div class="bg-white rounded-xl p-6 shadow-sm border">
+<div class="bg-white rounded-xl p-6 border border-gray-200">
     <h3 class="text-lg font-semibold text-gray-900 mb-4">Progresso de Estudos</h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="text-center">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="book-open" class="w-8 h-8 text-blue-600"></i>
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="book-open" class="w-8 h-8 text-emerald-600"></i>
             </div>
             <h4 class="font-semibold text-gray-900 mb-1">Conteúdos Estudados</h4>
-            <p class="text-2xl font-bold text-blue-600" id="conteudos-studied">0</p>
+            <p class="text-2xl font-bold text-emerald-600" id="conteudos-studied">0</p>
             <p class="text-sm text-gray-500">de 50 conteúdos</p>
         </div>
         
         <div class="text-center">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="check-circle" class="w-8 h-8 text-emerald-600"></i>
             </div>
             <h4 class="font-semibold text-gray-900 mb-1">Simulados Concluídos</h4>
-            <p class="text-2xl font-bold text-green-600" id="simulados-completed">0</p>
+            <p class="text-2xl font-bold text-emerald-600" id="simulados-completed">0</p>
             <p class="text-sm text-gray-500">de 10 simulados</p>
         </div>
         
         <div class="text-center">
-            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="target" class="w-8 h-8 text-purple-600"></i>
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="target" class="w-8 h-8 text-emerald-600"></i>
             </div>
             <h4 class="font-semibold text-gray-900 mb-1">Taxa de Acerto</h4>
-            <p class="text-2xl font-bold text-purple-600" id="accuracy-rate">0%</p>
+            <p class="text-2xl font-bold text-emerald-600" id="accuracy-rate">0%</p>
             <p class="text-sm text-gray-500">média geral</p>
         </div>
     </div>
@@ -157,8 +157,8 @@
                 const contentContainer = document.getElementById('recent-content');
                 contentContainer.innerHTML = recentContent.map(content => `
                     <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="book" class="w-4 h-4 text-blue-600"></i>
+                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="book" class="w-4 h-4 text-emerald-600"></i>
                         </div>
                         <div class="flex-1">
                             <p class="font-medium text-gray-900">${content.nome}</p>
@@ -181,8 +181,8 @@
                 const simuladosContainer = document.getElementById('recent-simulados');
                 simuladosContainer.innerHTML = recentSimulados.map(simulado => `
                     <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="clipboard-check" class="w-4 h-4 text-green-600"></i>
+                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-600"></i>
                         </div>
                         <div class="flex-1">
                             <p class="font-medium text-gray-900">${simulado.nome}</p>

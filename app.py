@@ -8,8 +8,8 @@ import os
 import json
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'enempro-secret-key-2025'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enempro.db'
+app.config['SECRET_KEY'] = 'enemlife-secret-key-2025'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enemlife.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
@@ -111,6 +111,10 @@ def flashcards_page():
 @app.route('/simulados')
 def simulados_page():
     return render_template('simulados.html')
+
+@app.route('/simulados/<int:simulado_id>/questoes')
+def gerenciar_questoes_page(simulado_id):
+    return render_template('gerenciar_questoes.html', simulado_id=simulado_id)
 
 @app.route('/questoes')
 def questoes_page():
@@ -920,7 +924,9 @@ def remover_questao_simulado(id):
 
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({'error': 'Endpoint não encontrado'}), 404
+    if request.path.startswith('/api/'):
+        return jsonify({'error': 'Endpoint não encontrado'}), 404
+    return render_template('404.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
@@ -945,14 +951,14 @@ if __name__ == '__main__':
         except Exception as e:
             pass
         
-        admin = Usuario.query.filter_by(email='admin@enempro.com').first()
+        admin = Usuario.query.filter_by(email='admin@enemlife.com').first()
         if not admin:
             admin = Usuario(
-                nome_completo='Administrador ENEMPRO',
+                nome_completo='Administrador ENEMLIFE',
                 apelido='Admin',
                 data_nascimento=datetime(1990, 1, 1).date(),
                 escolaridade='Superior',
-                email='admin@enempro.com',
+                email='admin@enemlife.com',
                 telefone='(84) 99999-9999',
                 senha=generate_password_hash('admin123'),
                 aceitou_termos=True,
@@ -961,4 +967,4 @@ if __name__ == '__main__':
             db.session.add(admin)
             db.session.commit()
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=7000)

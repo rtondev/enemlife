@@ -16,7 +16,7 @@
 </div>
 
 <!-- Filters -->
-<div class="bg-white rounded-xl p-6 shadow-sm border mb-6">
+<div class="bg-white rounded-xl p-6 border border-gray-200 mb-6">
     <div class="flex flex-wrap items-center gap-4">
         <div class="flex-1 min-w-64">
             <input 
@@ -46,16 +46,18 @@
 </div>
 
 <!-- Empty State -->
-<div id="empty-state" class="hidden text-center py-12">
-    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="book" class="w-12 h-12 text-gray-400"></i>
+<div id="empty-state" class="hidden py-12">
+    <div class="flex flex-col items-center justify-center text-center">
+        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="book" class="w-12 h-12 text-gray-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhum conteúdo encontrado</h3>
+        <p class="text-gray-600 mb-6">Comece criando seu primeiro conteúdo de estudo.</p>
+        <button onclick="openCreateModal()" class="btn-primary">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Criar Conteúdo
+        </button>
     </div>
-    <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhum conteúdo encontrado</h3>
-    <p class="text-gray-600 mb-6">Comece criando seu primeiro conteúdo de estudo.</p>
-    <button onclick="openCreateModal()" class="btn-primary">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        Criar Conteúdo
-    </button>
 </div>
 
 <!-- Create/Edit Modal -->
@@ -151,11 +153,11 @@
         emptyState.classList.add('hidden');
         
         grid.innerHTML = filteredContents.map(content => `
-            <div class="bg-white rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow">
+            <div class="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-md transition-shadow">
                 <div class="flex items-start justify-between mb-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="${getTypeIcon(content.tipo)}" class="w-5 h-5 text-blue-600"></i>
+                        <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="${getTypeIcon(content.tipo)}" class="w-5 h-5 text-emerald-600"></i>
                         </div>
                         <div>
                             <h3 class="font-semibold text-gray-900">${content.nome}</h3>
@@ -163,7 +165,7 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button onclick="editContent(${content.id})" class="text-gray-400 hover:text-blue-600">
+                        <button onclick="editContent(${content.id})" class="text-gray-400 hover:text-emerald-600">
                             <i data-lucide="edit" class="w-4 h-4"></i>
                         </button>
                         <button onclick="deleteContent(${content.id})" class="text-gray-400 hover:text-red-600">
@@ -175,7 +177,7 @@
                 <p class="text-gray-600 text-sm mb-4">${content.descricao || 'Sem descrição'}</p>
                 
                 ${content.link ? `
-                    <a href="${content.link}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    <a href="${content.link}" target="_blank" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 text-sm font-medium">
                         <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
                         Acessar Link
                     </a>

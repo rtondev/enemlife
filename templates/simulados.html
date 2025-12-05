@@ -21,16 +21,18 @@
 </div>
 
 <!-- Empty State -->
-<div id="empty-state" class="hidden text-center py-12">
-    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="clipboard-check" class="w-12 h-12 text-gray-400"></i>
+<div id="empty-state" class="hidden py-12">
+    <div class="flex flex-col items-center justify-center text-center">
+        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="clipboard-check" class="w-12 h-12 text-gray-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhum simulado encontrado</h3>
+        <p class="text-gray-600 mb-6">Crie seu primeiro simulado para começar a praticar.</p>
+        <button onclick="openCreateModal()" class="btn-primary">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Criar Simulado
+        </button>
     </div>
-    <h3 class="text-lg font-semibold text-gray-900 mb-2">Nenhum simulado encontrado</h3>
-    <p class="text-gray-600 mb-6">Crie seu primeiro simulado para começar a praticar.</p>
-    <button onclick="openCreateModal()" class="btn-primary">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        Criar Simulado
-    </button>
 </div>
 
 <!-- Create/Edit Modal -->
@@ -214,11 +216,11 @@
         emptyState.classList.add('hidden');
         
         grid.innerHTML = allSimulados.map(simulado => `
-            <div class="bg-white rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow">
+            <div class="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-md transition-shadow">
                 <div class="flex items-start justify-between mb-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                            <i data-lucide="clipboard-check" class="w-5 h-5 text-green-600"></i>
+                        <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-600"></i>
                         </div>
                         <div>
                             <h3 class="font-semibold text-gray-900">${simulado.nome}</h3>
@@ -226,10 +228,10 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button onclick="manageQuestions(${simulado.id})" class="text-gray-400 hover:text-blue-600" title="Gerenciar Questões">
+                        <a href="/simulados/${simulado.id}/questoes" class="text-gray-400 hover:text-emerald-600" title="Gerenciar Questões">
                             <i data-lucide="settings" class="w-4 h-4"></i>
-                        </button>
-                        <button onclick="editSimulado(${simulado.id})" class="text-gray-400 hover:text-blue-600">
+                        </a>
+                        <button onclick="editSimulado(${simulado.id})" class="text-gray-400 hover:text-emerald-600">
                             <i data-lucide="edit" class="w-4 h-4"></i>
                         </button>
                         <button onclick="deleteSimulado(${simulado.id})" class="text-gray-400 hover:text-red-600">
@@ -337,14 +339,14 @@
                     <p class="text-sm font-medium text-gray-900">${questao.pergunta.substring(0, 50)}...</p>
                     <p class="text-xs text-gray-500">Resposta: ${questao.correta}</p>
                 </div>
-                <button onclick="addQuestionToSimulado(${questao.id})" class="text-blue-600 hover:text-blue-700">
+                <button onclick="addQuestionToSimulado(${questao.id})" class="text-emerald-600 hover:text-emerald-700">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                 </button>
             </div>
         `).join('');
         
         document.getElementById('simulado-questions').innerHTML = currentSimuladoQuestoes.map(questao => `
-            <div class="p-3 bg-blue-50 rounded-lg flex items-center justify-between">
+            <div class="p-3 bg-emerald-50 rounded-lg flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-900">${questao.pergunta.substring(0, 50)}...</p>
                     <p class="text-xs text-gray-500">Resposta: ${questao.correta}</p>

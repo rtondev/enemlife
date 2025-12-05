@@ -6,7 +6,7 @@
 }
 
 :root {
-  --PRIMARY: #0064E0;
+  --PRIMARY: #34d399;
   --BRANCO: #FFF;
   --PRETO: #131D22;
   --CINZA-2: #DEE3E9;
@@ -41,7 +41,7 @@ body {
 }
 
 .btn-primary:hover {
-  background: #0052B8;
+  background: #10b981;
   transform: translateY(-1px);
 }
 
@@ -98,7 +98,7 @@ body {
 
 .form-input:focus {
   border-color: var(--PRIMARY);
-  box-shadow: 0 0 0 2px rgba(0, 100, 224, 0.2);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.2);
   outline: none;
 }
 
@@ -200,9 +200,9 @@ body {
 }
 
 .nav-item.active {
-  background-color: #EBF4FF;
-  color: #2563EB;
-  border-right: 2px solid #2563EB;
+  background-color: #d1fae5;
+  color: #34d399;
+  border-right: 2px solid #34d399;
 }
 
 .nav-item i {

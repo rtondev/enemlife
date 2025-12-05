@@ -1,10 +1,10 @@
-# ENEMPRO - Sistema de Preparação para ENEM
+# ENEMLIFE - Sistema de Preparação para ENEM
 
 Sistema web desenvolvido para auxiliar estudantes na preparação para o Exame Nacional do Ensino Médio (ENEM), oferecendo funcionalidades de organização de estudos, criação de simulados, gerenciamento de questões e flashcards.
 
 ## Sobre o Projeto
 
-O ENEMPRO é uma plataforma completa de estudos que permite aos usuários:
+O ENEMLIFE é uma plataforma completa de estudos que permite aos usuários:
 - Organizar conteúdos de estudo (vídeos, artigos, links)
 - Criar e gerenciar flashcards personalizados
 - Desenvolver simulados personalizados com questões próprias
@@ -70,11 +70,11 @@ JWT_SECRET_KEY=sua-chave-jwt-aqui
 
 ### Banco de Dados
 
-O banco de dados SQLite será criado automaticamente na primeira execução. O arquivo `enempro.db` será gerado na pasta `instance/`.
+O banco de dados SQLite será criado automaticamente na primeira execução. O arquivo `enemlife.db` será gerado na pasta `instance/`.
 
 ### Usuário Administrador Padrão
 
-- Email: `admin@enempro.com`
+- Email: `admin@enemlife.com`
 - Senha: `admin123`
 
 **IMPORTANTE:** Altere a senha do administrador em produção!
@@ -127,7 +127,7 @@ Para dúvidas ou sugestões, entre em contato através do GitLab Issues.
 
 - [Documentação do Flask](https://flask.palletsprojects.com/)
 - [Documentação do SQLAlchemy](https://docs.sqlalchemy.org/)
-- [GitLab do Projeto](https://gitlab.com/seu-usuario/enempro)
+- [GitLab do Projeto](https://gitlab.com/seu-usuario/enemlife)
 
 ---
 

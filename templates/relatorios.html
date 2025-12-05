@@ -1,134 +1,106 @@
 {% extends "dashboard_base.html" %}
 
-{% block page_title %}Relatórios{% endblock %}
+{% block title %}Relatórios - ENEMLIFE{% endblock %}
 
 {% block content %}
 <!-- Header -->
-<div class="mb-8">
-    <h2 class="text-2xl font-bold text-gray-900">Relatórios e Estatísticas</h2>
-    <p class="text-gray-600">Acompanhe seu progresso e desempenho</p>
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">Relatórios</h2>
+        <p class="text-gray-600">Acompanhe seu progresso e desempenho</p>
+    </div>
 </div>
 
 <!-- Stats Overview -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-600">Conteúdos Estudados</p>
+                <p class="text-sm font-medium text-gray-600 mb-1">Conteúdos</p>
                 <p class="text-2xl font-bold text-gray-900" id="conteudos-studied">0</p>
-                <p class="text-xs text-gray-500">de 50 conteúdos</p>
             </div>
-            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="book" class="w-6 h-6 text-blue-600"></i>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="book" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-600">Simulados Concluídos</p>
+                <p class="text-sm font-medium text-gray-600 mb-1">Simulados</p>
                 <p class="text-2xl font-bold text-gray-900" id="simulados-completed">0</p>
-                <p class="text-xs text-gray-500">de 10 simulados</p>
             </div>
-            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="clipboard-check" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-600">Taxa de Acerto</p>
-                <p class="text-2xl font-bold text-gray-900" id="accuracy-rate">0%</p>
-                <p class="text-xs text-gray-500">média geral</p>
+                <p class="text-sm font-medium text-gray-600 mb-1">Flashcards</p>
+                <p class="text-2xl font-bold text-gray-900" id="flashcards-count">0</p>
             </div>
-            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="target" class="w-6 h-6 text-purple-600"></i>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="zap" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-600">Tempo de Estudo</p>
-                <p class="text-2xl font-bold text-gray-900" id="study-time">0h</p>
-                <p class="text-xs text-gray-500">esta semana</p>
+                <p class="text-sm font-medium text-gray-600 mb-1">Questões</p>
+                <p class="text-2xl font-bold text-gray-900" id="questoes-count">0</p>
             </div>
-            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <i data-lucide="clock" class="w-6 h-6 text-orange-600"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-    <!-- Performance Chart -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Desempenho nos Simulados</h3>
-        <div class="h-64 flex items-center justify-center">
-            <div class="text-center">
-                <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="bar-chart-3" class="w-12 h-12 text-gray-400"></i>
-                </div>
-                <p class="text-gray-500">Gráfico de desempenho será implementado</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Study Progress Chart -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Progresso de Estudos</h3>
-        <div class="h-64 flex items-center justify-center">
-            <div class="text-center">
-                <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="trending-up" class="w-12 h-12 text-gray-400"></i>
-                </div>
-                <p class="text-gray-500">Gráfico de progresso será implementado</p>
+            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="help-circle" class="w-6 h-6 text-emerald-600"></i>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Recent Activity -->
-<div class="bg-white rounded-xl p-6 shadow-sm border mb-8">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Atividade Recente</h3>
-    <div id="recent-activity" class="space-y-4">
-        <!-- Activity items will be loaded here -->
+<div class="bg-white rounded-xl p-6 border border-gray-200 mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 mb-6">Atividade Recente</h3>
+    <div id="recent-activity" class="space-y-3">
+        <div class="text-center py-12 text-gray-500">
+            <i data-lucide="loader" class="w-8 h-8 mx-auto mb-2 animate-spin"></i>
+            <p>Carregando atividades...</p>
+        </div>
     </div>
 </div>
 
 <!-- Study Goals -->
-<div class="bg-white rounded-xl p-6 shadow-sm border">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Metas de Estudo</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="book-open" class="w-8 h-8 text-blue-600"></i>
+<div class="bg-white rounded-xl p-6 border border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-6">Metas de Estudo</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="book-open" class="w-8 h-8 text-emerald-600"></i>
             </div>
             <h4 class="font-semibold text-gray-900 mb-1">Conteúdos por Semana</h4>
-            <p class="text-2xl font-bold text-blue-600" id="weekly-content-goal">5</p>
+            <p class="text-2xl font-bold text-emerald-600" id="weekly-content-goal">5</p>
             <p class="text-sm text-gray-500">conteúdos estudados</p>
         </div>
         
-        <div class="text-center">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="clipboard-check" class="w-8 h-8 text-green-600"></i>
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="clipboard-check" class="w-8 h-8 text-emerald-600"></i>
             </div>
             <h4 class="font-semibold text-gray-900 mb-1">Simulados por Mês</h4>
-            <p class="text-2xl font-bold text-green-600" id="monthly-simulado-goal">2</p>
+            <p class="text-2xl font-bold text-emerald-600" id="monthly-simulado-goal">2</p>
             <p class="text-sm text-gray-500">simulados realizados</p>
         </div>
         
-        <div class="text-center">
-            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="target" class="w-8 h-8 text-purple-600"></i>
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="target" class="w-8 h-8 text-emerald-600"></i>
             </div>
             <h4 class="font-semibold text-gray-900 mb-1">Meta de Acerto</h4>
-            <p class="text-2xl font-bold text-purple-600" id="accuracy-goal">80%</p>
+            <p class="text-2xl font-bold text-emerald-600" id="accuracy-goal">80%</p>
             <p class="text-sm text-gray-500">taxa de acerto</p>
         </div>
     </div>
@@ -150,19 +122,16 @@
             if (statsResponse.ok) {
                 const stats = await statsResponse.json();
                 
-                document.getElementById('conteudos-studied').textContent = Math.min(stats.usuario.conteudos, 50);
-                document.getElementById('simulados-completed').textContent = Math.min(stats.usuario.simulados, 10);
-                
-                const mockAccuracy = Math.floor(Math.random() * 30) + 60;
-                document.getElementById('accuracy-rate').textContent = mockAccuracy + '%';
-                
-                const mockStudyTime = Math.floor(Math.random() * 20) + 5;
-                document.getElementById('study-time').textContent = mockStudyTime + 'h';
+                document.getElementById('conteudos-studied').textContent = stats.usuario.conteudos || 0;
+                document.getElementById('simulados-completed').textContent = stats.usuario.simulados || 0;
+                document.getElementById('flashcards-count').textContent = stats.usuario.flashcards || 0;
+                document.getElementById('questoes-count').textContent = stats.usuario.questoes || 0;
             }
             
             loadRecentActivity();
             
         } catch (error) {
+            console.error('Erro ao carregar estatísticas:', error);
         }
     }
     
@@ -198,14 +167,14 @@
                         title: `Novo conteúdo: ${content.nome}`,
                         time: content.created_at,
                         icon: 'book',
-                        color: 'blue'
+                        color: 'emerald'
                     })),
                     ...recentSimulados.map(simulado => ({
                         type: 'simulado',
                         title: `Simulado criado: ${simulado.nome}`,
                         time: simulado.created_at,
                         icon: 'clipboard-check',
-                        color: 'green'
+                        color: 'emerald'
                     }))
                 ].sort((a, b) => new Date(b.time) - new Date(a.time));
                 
@@ -213,6 +182,7 @@
             }
             
         } catch (error) {
+            console.error('Erro ao carregar atividades:', error);
         }
     }
     
@@ -221,24 +191,25 @@
         
         if (activities.length === 0) {
             container.innerHTML = `
-                <div class="text-center py-8">
+                <div class="text-center py-12 text-gray-500">
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="activity" class="w-8 h-8 text-gray-400"></i>
                     </div>
-                    <p class="text-gray-500">Nenhuma atividade recente</p>
+                    <p>Nenhuma atividade recente</p>
                 </div>
             `;
+            lucide.createIcons();
             return;
         }
         
         container.innerHTML = activities.map(activity => `
-            <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                <div class="w-10 h-10 bg-${activity.color}-100 rounded-lg flex items-center justify-center">
-                    <i data-lucide="${activity.icon}" class="w-5 h-5 text-${activity.color}-600"></i>
+            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-emerald-400 transition-colors">
+                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="${activity.icon}" class="w-5 h-5 text-emerald-600"></i>
                 </div>
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-900">${activity.title}</p>
-                    <p class="text-xs text-gray-500">${new Date(activity.time).toLocaleString()}</p>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">${activity.title}</p>
+                    <p class="text-xs text-gray-500">${new Date(activity.time).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                 </div>
             </div>
         `).join('');
@@ -246,6 +217,13 @@
         lucide.createIcons();
     }
     
-    document.addEventListener('DOMContentLoaded', loadReportsData);
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+        loadReportsData();
+    });
 </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Recuperar Senha - ENEMPRO{% endblock %}
+{% block title %}Recuperar Senha - ENEMLIFE{% endblock %}
 
 {% block content %}
 <!-- Recovery Form -->
@@ -17,8 +17,8 @@
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center">
-                        <div id="step-1-indicator" class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
-                        <div class="w-16 h-1 bg-blue-600 mx-2" id="step-1-line"></div>
+                        <div id="step-1-indicator" class="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+                        <div class="w-16 h-1 bg-emerald-600 mx-2" id="step-1-line"></div>
                         <div id="step-2-indicator" class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">2</div>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
 
             <!-- Back to Login -->
             <div class="mt-6 text-center">
-                <a href="{{ url_for('login_page') }}" class="text-sm text-gray-600 hover:text-blue-600">
+                <a href="{{ url_for('login_page') }}" class="text-sm text-gray-600 hover:text-emerald-600">
                     <i data-lucide="arrow-left" class="w-4 h-4 inline mr-1"></i>
                     Voltar ao Login
                 </a>
@@ -230,15 +230,15 @@
     function goToStep2() {
         currentStep = 2;
         
-        document.getElementById('step-1-indicator').classList.remove('bg-blue-600', 'text-white');
+        document.getElementById('step-1-indicator').classList.remove('bg-emerald-600', 'text-white');
         document.getElementById('step-1-indicator').classList.add('bg-green-600', 'text-white');
-        document.getElementById('step-1-line').classList.remove('bg-blue-600');
+        document.getElementById('step-1-line').classList.remove('bg-emerald-600');
         document.getElementById('step-1-line').classList.add('bg-green-600');
         document.getElementById('step-2-indicator').classList.remove('bg-gray-300', 'text-gray-600');
-        document.getElementById('step-2-indicator').classList.add('bg-blue-600', 'text-white');
+        document.getElementById('step-2-indicator').classList.add('bg-emerald-600', 'text-white');
         
         document.getElementById('step-1-text').classList.add('text-green-600');
-        document.getElementById('step-2-text').classList.add('text-blue-600');
+        document.getElementById('step-2-text').classList.add('text-emerald-600');
         
         document.getElementById('step-1').classList.add('hidden');
         document.getElementById('step-2').classList.remove('hidden');
@@ -247,15 +247,15 @@
     function goBackToStep1() {
         currentStep = 1;
         
-        document.getElementById('step-1-indicator').classList.add('bg-blue-600', 'text-white');
+        document.getElementById('step-1-indicator').classList.add('bg-emerald-600', 'text-white');
         document.getElementById('step-1-indicator').classList.remove('bg-green-600');
-        document.getElementById('step-1-line').classList.add('bg-blue-600');
+        document.getElementById('step-1-line').classList.add('bg-emerald-600');
         document.getElementById('step-1-line').classList.remove('bg-green-600');
         document.getElementById('step-2-indicator').classList.add('bg-gray-300', 'text-gray-600');
-        document.getElementById('step-2-indicator').classList.remove('bg-blue-600', 'text-white');
+        document.getElementById('step-2-indicator').classList.remove('bg-emerald-600', 'text-white');
         
         document.getElementById('step-1-text').classList.remove('text-green-600');
-        document.getElementById('step-2-text').classList.remove('text-blue-600');
+        document.getElementById('step-2-text').classList.remove('text-emerald-600');
         
         document.getElementById('step-1').classList.remove('hidden');
         document.getElementById('step-2').classList.add('hidden');
