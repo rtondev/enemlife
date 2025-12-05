@@ -4,14 +4,30 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 import os
 import json
 
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'enemlife-secret-key-2025'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enemlife.db'
+
+# Configuração do banco de dados
+DB_TYPE = os.getenv('DB_TYPE', 'sqlite')  # 'mysql' ou 'sqlite'
+
+if DB_TYPE == 'mysql':
+    DB_HOST = os.getenv('DB_HOST', 'localhost')
+    DB_PORT = os.getenv('DB_PORT', '3306')
+    DB_USER = os.getenv('DB_USER', 'root')
+    DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+    DB_NAME = os.getenv('DB_NAME', 'enemlife')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enemlife.db'
+
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'enemlife-secret-key-2025')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-string')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 db = SQLAlchemy(app)
@@ -937,19 +953,26 @@ if __name__ == '__main__':
         db.create_all()
         
         try:
-            from sqlalchemy import text
-            result = db.session.execute(text("PRAGMA table_info(questao)"))
-            columns = [row[1] for row in result.fetchall()]
+            from sqlalchemy import text, inspect
+            inspector = inspect(db.engine)
             
-            if 'tipo' not in columns:
-                db.session.execute(text("ALTER TABLE questao ADD COLUMN tipo VARCHAR(50)"))
-            
-            if 'publica' not in columns:
-                db.session.execute(text("ALTER TABLE questao ADD COLUMN publica BOOLEAN DEFAULT 0"))
-            
-            db.session.commit()
+            # Verificar se a tabela questao existe
+            if 'questao' in inspector.get_table_names():
+                columns = [col['name'] for col in inspector.get_columns('questao')]
+                
+                if 'tipo' not in columns:
+                    db.session.execute(text("ALTER TABLE questao ADD COLUMN tipo VARCHAR(50)"))
+                
+                if 'publica' not in columns:
+                    if DB_TYPE == 'mysql':
+                        db.session.execute(text("ALTER TABLE questao ADD COLUMN publica BOOLEAN DEFAULT 0"))
+                    else:
+                        db.session.execute(text("ALTER TABLE questao ADD COLUMN publica BOOLEAN DEFAULT 0"))
+                
+                db.session.commit()
         except Exception as e:
-            pass
+            print(f"Erro ao verificar colunas: {e}")
+            db.session.rollback()
         
         admin = Usuario.query.filter_by(email='admin@enemlife.com').first()
         if not admin:
