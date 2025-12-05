@@ -1,9 +1,9 @@
 module.exports = {
   apps: [{
     name: 'enemlife',
-    script: 'gunicorn',
+    script: './venv/bin/gunicorn',
     args: '--bind 0.0.0.0:7000 --workers 4 --timeout 120 wsgi:app',
-    interpreter: 'python3',
+    cwd: '/root/enemlife',
     instances: 1,
     autorestart: true,
     watch: false,
@@ -13,8 +13,8 @@ module.exports = {
       DB_TYPE: 'mysql',
       DB_HOST: 'localhost',
       DB_PORT: '3306',
-      DB_USER: 'enemlife_user',
-      DB_PASSWORD: 'sua_senha_aqui',
+      DB_USER: 'rtondev',
+      DB_PASSWORD: 'oy1kwlf0A#1',
       DB_NAME: 'enemlife',
       SECRET_KEY: 'sua-secret-key-aqui',
       JWT_SECRET_KEY: 'sua-jwt-secret-key-aqui'
