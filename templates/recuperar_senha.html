@@ -32,7 +32,7 @@
             <div id="step-1" class="space-y-6">
                 <div class="text-center mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 mb-2">Verificar Dados</h2>
-                    <p class="text-sm text-gray-600">Digite seu email e telefone para verificar sua identidade</p>
+                    <p class="text-sm text-gray-600">Digite seu email para verificar sua identidade</p>
                 </div>
 
                 <form id="verify-form" class="space-y-4">
@@ -47,21 +47,6 @@
                             placeholder="seu@email.com"
                             class="form-input"
                             required
-                        >
-                    </div>
-
-                    <div>
-                        <label for="telefone" class="form-label">
-                            Telefone cadastrado
-                        </label>
-                        <input 
-                            type="tel" 
-                            id="telefone" 
-                            name="telefone"
-                            placeholder="(84) 99999-9999"
-                            class="form-input"
-                            required
-                            maxlength="15"
                         >
                     </div>
 
@@ -159,7 +144,6 @@
         e.preventDefault();
         
         const email = document.getElementById('email').value;
-        const telefone = document.getElementById('telefone').value;
         
         try {
             const response = await fetch('/api/recuperar', {
@@ -168,8 +152,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: email,
-                    telefone: telefone
+                    email: email
                 })
             });
             
@@ -267,16 +250,6 @@
         document.getElementById('success-message').classList.remove('hidden');
     }
 
-    document.getElementById('telefone').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
-        }
-        if (value.length >= 10) {
-            value = value.substring(0, 10) + '-' + value.substring(10, 14);
-        }
-        e.target.value = value;
-    });
     
     document.getElementById('confirmar_senha').addEventListener('input', function() {
         const novaSenha = document.getElementById('nova_senha').value;

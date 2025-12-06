@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Cadastro - ENEMLIFE{% endblock %}
+{% block title %}Cadastro - Enem Life{% endblock %}
 
 {% block content %}
 <!-- Registration Form -->
@@ -16,12 +16,18 @@
             <!-- Progress Bar -->
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-600">Etapa <span id="current-step">1</span> de 3</span>
+                    <span class="text-sm font-medium text-gray-600">Etapa <span id="current-step">1</span> de 4</span>
                     <span class="text-sm text-gray-500" id="step-title">Informações Pessoais</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div id="progress-bar" class="bg-emerald-600 h-2 rounded-full transition-all duration-300" style="width: 33.33%"></div>
+                    <div id="progress-bar" class="bg-emerald-600 h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
                 </div>
+            </div>
+
+            <!-- Alert Box -->
+            <div id="alert-box" class="hidden mb-6 p-4 rounded-lg flex items-center gap-3">
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                <span id="alert-message"></span>
             </div>
 
             <!-- Registration Form -->
@@ -73,23 +79,112 @@
                     </div>
 
                     <div>
-                        <label for="phone" class="form-label">
-                            Telefone
+                        <label class="form-label">
+                            Data de Nascimento
                         </label>
-                        <input 
-                            type="tel" 
-                            id="phone" 
-                            name="phone"
-                            placeholder="(84) 99999-9999"
-                            class="form-input"
-                            required
-                            maxlength="15"
-                        >
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="dia" class="text-xs text-gray-600 mb-1 block">Dia</label>
+                                <input 
+                                    type="number" 
+                                    id="dia" 
+                                    name="dia"
+                                    placeholder="DD"
+                                    class="form-input"
+                                    min="1"
+                                    max="31"
+                                    required
+                                >
+                            </div>
+                            <div>
+                                <label for="mes" class="text-xs text-gray-600 mb-1 block">Mês</label>
+                                <select 
+                                    id="mes" 
+                                    name="mes"
+                                    class="form-input"
+                                    required
+                                >
+                                    <option value="">Mês</option>
+                                    <option value="01">Janeiro</option>
+                                    <option value="02">Fevereiro</option>
+                                    <option value="03">Março</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Maio</option>
+                                    <option value="06">Junho</option>
+                                    <option value="07">Julho</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="ano" class="text-xs text-gray-600 mb-1 block">Ano</label>
+                                <input 
+                                    type="number" 
+                                    id="ano" 
+                                    name="ano"
+                                    placeholder="AAAA"
+                                    class="form-input"
+                                    min="1900"
+                                    max="2010"
+                                    required
+                                >
+                            </div>
+                        </div>
+                        <p id="data-error" class="text-xs text-red-600 mt-1 hidden"></p>
+                    </div>
+
+                    <div>
+                        <label for="escolaridade" class="form-label">
+                            Escolaridade
+                        </label>
+                        <select id="escolaridade" name="escolaridade" class="form-input" required>
+                            <option value="">Selecione...</option>
+                            <option value="Ensino Fundamental">Ensino Fundamental</option>
+                            <option value="Ensino Médio">Ensino Médio</option>
+                            <option value="Superior">Superior</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Step 2: Security -->
+                <!-- Step 2: Email Verification -->
                 <div id="step-2" class="step-content space-y-6 hidden">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
+                            <i data-lucide="mail" class="w-8 h-8 text-emerald-600"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Verifique seu e-mail</h3>
+                        <p class="text-sm text-gray-600 mb-6">
+                            Enviamos um código de verificação para <strong id="email-display"></strong>
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="codigo" class="form-label">
+                            Código de Verificação
+                        </label>
+                        <input 
+                            type="text" 
+                            id="codigo" 
+                            name="codigo"
+                            placeholder="000000"
+                            class="form-input text-center text-2xl tracking-widest"
+                            maxlength="6"
+                            required
+                        >
+                        <p class="text-xs text-gray-500 mt-2">
+                            Não recebeu o código? 
+                            <button type="button" id="reenviar-codigo" class="text-emerald-600 hover:text-emerald-700 font-semibold">
+                                Reenviar
+                            </button>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3: Security -->
+                <div id="step-3" class="step-content space-y-6 hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="password" class="form-label">
@@ -119,28 +214,10 @@
                             >
                         </div>
                     </div>
-
-                    <!-- User Type -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-900 mb-3">
-                            Tipo de Usuário
-                        </label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                                <input type="radio" name="userType" value="student" class="mr-3" checked>
-                                <div class="font-semibold text-gray-900">🎓 Estudante</div>
-                            </label>
-                            
-                            <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                                <input type="radio" name="userType" value="teacher" class="mr-3">
-                                <div class="font-semibold text-gray-900">👨‍🏫 Professor</div>
-                            </label>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Step 3: Terms -->
-                <div id="step-3" class="step-content space-y-6 hidden">
+                <!-- Step 4: Terms -->
+                <div id="step-4" class="step-content space-y-6 hidden">
                     <div class="flex items-start">
                         <input type="checkbox" id="terms" name="terms" class="mt-1 mr-3" required>
                         <label for="terms" class="text-sm text-gray-600">
@@ -191,13 +268,31 @@
 {% block extra_scripts %}
 <script>
     let currentStep = 1;
-    const totalSteps = 3;
+    const totalSteps = 4;
+    let emailVerificado = false;
     
     const stepTitles = {
         1: 'Informações Pessoais',
-        2: 'Segurança e Tipo',
-        3: 'Termos e Condições'
+        2: 'Verificação de E-mail',
+        3: 'Segurança',
+        4: 'Termos e Condições'
     };
+    
+    function showAlert(message, type = 'success') {
+        const alertBox = document.getElementById('alert-box');
+        const alertMessage = document.getElementById('alert-message');
+        
+        alertMessage.textContent = message;
+        alertBox.className = `mb-6 p-4 rounded-lg flex items-center gap-3 ${
+            type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 
+            'bg-red-50 text-red-700 border border-red-200'
+        }`;
+        alertBox.classList.remove('hidden');
+        
+        setTimeout(() => {
+            alertBox.classList.add('hidden');
+        }, 5000);
+    }
     
     function updateStep(step) {
         document.querySelectorAll('.step-content').forEach(el => {
@@ -229,12 +324,86 @@
             nextBtn.classList.remove('hidden');
             submitBtn.classList.add('hidden');
         }
+        
+        // Se for step 2, mostrar email e enviar código
+        if (step === 2) {
+            const email = document.getElementById('email').value;
+            document.getElementById('email-display').textContent = email;
+            enviarCodigo();
+        }
+        
+        lucide.createIcons();
     }
     
-    document.getElementById('next-btn').addEventListener('click', function() {
-        if (validateCurrentStep()) {
-            currentStep++;
-            updateStep(currentStep);
+    async function enviarCodigo() {
+        const email = document.getElementById('email').value;
+        const firstName = document.getElementById('firstName').value;
+        const nome = firstName + ' ' + document.getElementById('lastName').value;
+        
+        try {
+            const response = await fetch('/api/enviar-codigo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, nome })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showAlert('Código enviado com sucesso! Verifique sua caixa de entrada.', 'success');
+            } else {
+                showAlert('Erro: ' + data.error, 'error');
+            }
+        } catch (error) {
+            showAlert('Erro ao enviar código. Tente novamente.', 'error');
+        }
+    }
+    
+    document.getElementById('next-btn').addEventListener('click', async function() {
+        if (currentStep === 1) {
+            if (validateCurrentStep()) {
+                currentStep++;
+                updateStep(currentStep);
+            }
+        } else if (currentStep === 2) {
+            // Verificar código
+            const email = document.getElementById('email').value;
+            const codigo = document.getElementById('codigo').value;
+            
+            if (!codigo || codigo.length !== 6) {
+                showAlert('Por favor, insira o código de 6 dígitos.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/verificar-codigo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, codigo })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    emailVerificado = true;
+                    showAlert('E-mail verificado com sucesso!', 'success');
+                    currentStep++;
+                    updateStep(currentStep);
+                } else {
+                    showAlert('Erro: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Erro ao verificar código. Tente novamente.', 'error');
+            }
+        } else {
+            if (validateCurrentStep()) {
+                currentStep++;
+                updateStep(currentStep);
+            }
         }
     });
     
@@ -243,47 +412,42 @@
         updateStep(currentStep);
     });
     
-        function validateCurrentStep() {
-            const currentStepElement = document.getElementById(`step-${currentStep}`);
-            const requiredInputs = currentStepElement.querySelectorAll('input[required]');
-            
-            for (let input of requiredInputs) {
-                if (!input.value.trim()) {
-                    alert('Por favor, preencha todos os campos obrigatórios.');
-                    input.focus();
-                    return false;
-                }
-            }
-            
-            if (currentStep === 1) {
-                const phone = document.getElementById('phone').value;
-                if (phone && !/^\(\d{2}\)\s\d{4,5}-\d{4}$/.test(phone)) {
-                    alert('Por favor, insira um telefone no formato (84) 99999-9999.');
-                    document.getElementById('phone').focus();
-                    return false;
-                }
-            }
-        
-        if (currentStep === 1) {
-            const email = document.getElementById('email').value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Por favor, insira um e-mail válido.');
-                return false;
-            }
+    document.getElementById('reenviar-codigo').addEventListener('click', function() {
+        enviarCodigo();
+    });
+    
+    // Apenas números no código
+    document.getElementById('codigo').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
+    
+    // Validação de data
+    function validarData(dia, mes, ano) {
+        if (!dia || !mes || !ano) {
+            return false;
         }
         
-        if (currentStep === 2) {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password.length < 8) {
-                alert('A senha deve ter pelo menos 8 caracteres.');
+        // Validar mês
+        if (mes < 1 || mes > 12) {
+            return false;
+        }
+        
+        // Validar ano
+        const anoAtual = new Date().getFullYear();
+        if (ano < 1900 || ano > anoAtual) {
+            return false;
+        }
+        
+        // Validar dia baseado no mês
+        const diasNoMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        
+        // Verificar ano bissexto
+        if (mes === 2 && ((ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0))) {
+            if (dia > 29) {
                 return false;
             }
-            
-            if (password !== confirmPassword) {
-                alert('As senhas não coincidem!');
+        } else {
+            if (dia > diasNoMes[mes - 1]) {
                 return false;
             }
         }
@@ -291,28 +455,117 @@
         return true;
     }
     
-    document.getElementById('phone').addEventListener('input', function(e) {
+    // Formatação automática dos campos de data
+    document.getElementById('dia').addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
-        }
-        if (value.length >= 10) {
-            value = value.substring(0, 10) + '-' + value.substring(10, 14);
+        if (value.length > 2) {
+            value = value.substring(0, 2);
         }
         e.target.value = value;
     });
     
+    document.getElementById('ano').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 4) {
+            value = value.substring(0, 4);
+        }
+        e.target.value = value;
+    });
+    
+    function validateCurrentStep() {
+        const currentStepElement = document.getElementById(`step-${currentStep}`);
+        const requiredInputs = currentStepElement.querySelectorAll('input[required], select[required]');
+        
+        for (let input of requiredInputs) {
+            if (!input.value.trim()) {
+                showAlert('Por favor, preencha todos os campos obrigatórios.', 'error');
+                input.focus();
+                return false;
+            }
+        }
+        
+        if (currentStep === 1) {
+            const email = document.getElementById('email').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Por favor, insira um e-mail válido.', 'error');
+                return false;
+            }
+            
+            // Validar data de nascimento
+            const dia = parseInt(document.getElementById('dia').value);
+            const mes = parseInt(document.getElementById('mes').value);
+            const ano = parseInt(document.getElementById('ano').value);
+            const dataError = document.getElementById('data-error');
+            
+            if (!validarData(dia, mes, ano)) {
+                dataError.textContent = 'Data de nascimento inválida.';
+                dataError.classList.remove('hidden');
+                return false;
+            } else {
+                dataError.classList.add('hidden');
+            }
+            
+            // Validar idade mínima (13 anos)
+            const hoje = new Date();
+            const dataNasc = new Date(ano, mes - 1, dia);
+            const idade = hoje.getFullYear() - ano;
+            const mesAtual = hoje.getMonth() + 1;
+            const diaAtual = hoje.getDate();
+            
+            if (idade < 13 || (idade === 13 && (mes > mesAtual || (mes === mesAtual && dia > diaAtual)))) {
+                dataError.textContent = 'Você deve ter pelo menos 13 anos para se cadastrar.';
+                dataError.classList.remove('hidden');
+                return false;
+            }
+            
+            // Validar idade máxima (100 anos)
+            if (idade > 100 || (idade === 100 && (mes < mesAtual || (mes === mesAtual && dia < diaAtual)))) {
+                dataError.textContent = 'Data de nascimento inválida.';
+                dataError.classList.remove('hidden');
+                return false;
+            }
+        }
+        
+        if (currentStep === 3) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password.length < 8) {
+                showAlert('A senha deve ter pelo menos 8 caracteres.', 'error');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                showAlert('As senhas não coincidem!', 'error');
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     document.getElementById('registration-form').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        if (!emailVerificado) {
+            showAlert('Por favor, verifique seu e-mail primeiro.', 'error');
+            return;
+        }
+        
         if (validateCurrentStep()) {
+            // Formatar data de nascimento
+            const dia = document.getElementById('dia').value.padStart(2, '0');
+            const mes = document.getElementById('mes').value;
+            const ano = document.getElementById('ano').value;
+            const data_nascimento = `${ano}-${mes}-${dia}`;
+            
             const formData = {
                 nome_completo: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
                 apelido: document.getElementById('firstName').value,
-                data_nascimento: '2000-01-01',
-                escolaridade: 'Ensino Médio',
+                data_nascimento: data_nascimento,
+                escolaridade: document.getElementById('escolaridade').value,
                 email: document.getElementById('email').value,
-                telefone: document.getElementById('phone').value,
                 senha: document.getElementById('password').value,
                 aceitou_termos: document.getElementById('terms').checked
             };
@@ -329,15 +582,19 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    alert('Conta criada com sucesso! Faça login para continuar.');
-                    window.location.href = '/login';
+                    showAlert('Conta criada com sucesso! Redirecionando...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1500);
                 } else {
-                    alert('Erro: ' + data.error);
+                    showAlert('Erro: ' + data.error, 'error');
                 }
             } catch (error) {
-                alert('Erro ao criar conta. Tente novamente.');
+                showAlert('Erro ao criar conta. Tente novamente.', 'error');
             }
         }
     });
+    
+    lucide.createIcons();
 </script>
 {% endblock %}

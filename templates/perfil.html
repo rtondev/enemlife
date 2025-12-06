@@ -50,10 +50,6 @@
             <div id="display-email" class="form-input bg-gray-50">-</div>
         </div>
         <div>
-            <label class="form-label">Telefone</label>
-            <div id="display-telefone" class="form-input bg-gray-50">-</div>
-        </div>
-        <div>
             <label class="form-label">Data de Nascimento</label>
             <div id="display-data_nascimento" class="form-input bg-gray-50">-</div>
         </div>
@@ -110,19 +106,6 @@
                             name="email"
                             class="form-input"
                             required
-                        >
-                    </div>
-
-                    <!-- Telefone -->
-                    <div>
-                        <label for="edit-telefone" class="form-label">Telefone</label>
-                        <input 
-                            type="tel" 
-                            id="edit-telefone" 
-                            name="telefone"
-                            placeholder="(84) 99999-9999"
-                            class="form-input"
-                            maxlength="15"
                         >
                     </div>
 
@@ -245,7 +228,6 @@
         document.getElementById('display-nome_completo').textContent = data.nome_completo || '-';
         document.getElementById('display-apelido').textContent = data.apelido || '-';
         document.getElementById('display-email').textContent = data.email || '-';
-        document.getElementById('display-telefone').textContent = data.telefone || '-';
         document.getElementById('display-data_nascimento').textContent = data.data_nascimento ? new Date(data.data_nascimento).toLocaleDateString('pt-BR') : '-';
         document.getElementById('display-escolaridade').textContent = data.escolaridade || '-';
         
@@ -253,7 +235,6 @@
         document.getElementById('edit-nome_completo').value = data.nome_completo || '';
         document.getElementById('edit-apelido').value = data.apelido || '';
         document.getElementById('edit-email').value = data.email || '';
-        document.getElementById('edit-telefone').value = data.telefone || '';
         document.getElementById('edit-data_nascimento').value = data.data_nascimento ? data.data_nascimento.split('T')[0] : '';
         document.getElementById('edit-escolaridade').value = data.escolaridade || '';
         
@@ -280,16 +261,6 @@
         populateForm(originalData);
     }
 
-    document.getElementById('edit-telefone').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
-        }
-        if (value.length >= 10) {
-            value = value.substring(0, 10) + '-' + value.substring(10, 14);
-        }
-        e.target.value = value;
-    });
 
 
     document.getElementById('profile-form').addEventListener('submit', async function(e) {

@@ -127,7 +127,7 @@ Para dúvidas ou sugestões, entre em contato através do GitLab Issues.
 
 - [Documentação do Flask](https://flask.palletsprojects.com/)
 - [Documentação do SQLAlchemy](https://docs.sqlalchemy.org/)
-- [GitLab do Projeto](https://gitlab.com/seu-usuario/enemlife)
+- [GitLab do Projeto](https://gitlab.com/rtondev/enemlife)
 
 ---
 

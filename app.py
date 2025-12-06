@@ -7,6 +7,11 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
 import json
+import smtplib
+import random
+import string
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 load_dotenv()
 
@@ -29,6 +34,13 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'enemlife-secret-key-2025')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-string')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
+
+# Configurações de Email
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', '')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', 'fmzsoiqgxfiszmzo')
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
@@ -53,10 +65,17 @@ class Usuario(db.Model):
     data_nascimento = db.Column(db.Date, nullable=False)
     escolaridade = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    telefone = db.Column(db.String(20), nullable=True)
     senha = db.Column(db.String(255), nullable=False)
     aceitou_termos = db.Column(db.Boolean, default=False)
+    email_verificado = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class CodigoVerificacao(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), nullable=False)
+    codigo = db.Column(db.String(6), nullable=False)
+    expirado = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Conteudo(db.Model):
@@ -152,6 +171,203 @@ def perfil_page():
 def recuperar_senha_page():
     return render_template('recuperar_senha.html')
 
+def gerar_codigo():
+    return ''.join(random.choices(string.digits, k=6))
+
+def enviar_email_verificacao(email, codigo, nome):
+    try:
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = 'Código de Verificação - Enem Life'
+        msg['From'] = app.config['MAIL_USERNAME']
+        msg['To'] = email
+        
+        # Template HTML do email
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{
+                    font-family: 'Inter', Arial, sans-serif;
+                    background: linear-gradient(to bottom, #f0f9ff, #ffffff);
+                    margin: 0;
+                    padding: 0;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 16px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }}
+                .header {{
+                    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+                    padding: 30px;
+                    text-align: center;
+                    color: white;
+                }}
+                .header h1 {{
+                    margin: 0;
+                    font-size: 24px;
+                    font-weight: 700;
+                }}
+                .content {{
+                    padding: 40px 30px;
+                }}
+                .codigo-box {{
+                    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+                    color: white;
+                    padding: 20px;
+                    border-radius: 12px;
+                    text-align: center;
+                    margin: 30px 0;
+                }}
+                .codigo {{
+                    font-size: 36px;
+                    font-weight: 700;
+                    letter-spacing: 8px;
+                    margin: 10px 0;
+                }}
+                .footer {{
+                    background: #f9fafb;
+                    padding: 20px;
+                    text-align: center;
+                    color: #6b7280;
+                    font-size: 12px;
+                }}
+                .button {{
+                    display: inline-block;
+                    background: #34d399;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    margin-top: 20px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Enem Life</h1>
+                </div>
+                <div class="content">
+                    <h2 style="color: #111827; margin-top: 0;">Olá, {nome}!</h2>
+                    <p style="color: #4b5563; line-height: 1.6;">
+                        Obrigado por se cadastrar no Enem Life! Para completar seu cadastro, 
+                        use o código de verificação abaixo:
+                    </p>
+                    <div class="codigo-box">
+                        <div style="font-size: 14px; opacity: 0.9;">Seu código de verificação</div>
+                        <div class="codigo">{codigo}</div>
+                        <div style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                            Este código expira em 10 minutos
+                        </div>
+                    </div>
+                    <p style="color: #6b7280; font-size: 14px;">
+                        Se você não solicitou este código, pode ignorar este email.
+                    </p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 Enem Life. Todos os direitos reservados.</p>
+                    <p>Este é um email automático, por favor não responda.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        part = MIMEText(html, 'html')
+        msg.attach(part)
+        
+        server = smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT'])
+        server.starttls()
+        server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+        server.send_message(msg)
+        server.quit()
+        
+        return True
+    except Exception as e:
+        print(f"Erro ao enviar email: {e}")
+        return False
+
+@app.route('/api/enviar-codigo', methods=['POST'])
+def enviar_codigo():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        nome = data.get('nome', 'Usuário')
+        
+        if not email:
+            return jsonify({'error': 'Email é obrigatório'}), 400
+        
+        # Verificar se email já está cadastrado
+        if Usuario.query.filter_by(email=email).first():
+            return jsonify({'error': 'Email já cadastrado'}), 400
+        
+        # Gerar código
+        codigo = gerar_codigo()
+        
+        # Invalidar códigos anteriores do mesmo email
+        CodigoVerificacao.query.filter_by(email=email, expirado=False).update({'expirado': True})
+        db.session.commit()
+        
+        # Salvar código no banco
+        codigo_verif = CodigoVerificacao(
+            email=email,
+            codigo=codigo
+        )
+        db.session.add(codigo_verif)
+        db.session.commit()
+        
+        # Enviar email
+        if enviar_email_verificacao(email, codigo, nome):
+            return jsonify({'message': 'Código enviado com sucesso'}), 200
+        else:
+            return jsonify({'error': 'Erro ao enviar email'}), 500
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/verificar-codigo', methods=['POST'])
+def verificar_codigo():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        codigo = data.get('codigo')
+        
+        if not email or not codigo:
+            return jsonify({'error': 'Email e código são obrigatórios'}), 400
+        
+        # Buscar código válido
+        codigo_verif = CodigoVerificacao.query.filter_by(
+            email=email,
+            codigo=codigo,
+            expirado=False
+        ).first()
+        
+        if not codigo_verif:
+            return jsonify({'error': 'Código inválido ou expirado'}), 400
+        
+        # Verificar se código não expirou (10 minutos)
+        tempo_expiracao = datetime.utcnow() - codigo_verif.created_at
+        if tempo_expiracao > timedelta(minutes=10):
+            codigo_verif.expirado = True
+            db.session.commit()
+            return jsonify({'error': 'Código expirado'}), 400
+        
+        # Marcar código como usado
+        codigo_verif.expirado = True
+        db.session.commit()
+        
+        return jsonify({'message': 'Código verificado com sucesso'}), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
 @app.route('/api/registro', methods=['POST'])
 def registro():
     try:
@@ -160,15 +376,24 @@ def registro():
         if Usuario.query.filter_by(email=data['email']).first():
             return jsonify({'error': 'Email já cadastrado'}), 400
         
+        # Verificar se código foi verificado
+        codigo_verif = CodigoVerificacao.query.filter_by(
+            email=data['email'],
+            expirado=True
+        ).order_by(CodigoVerificacao.created_at.desc()).first()
+        
+        if not codigo_verif or (datetime.utcnow() - codigo_verif.created_at) > timedelta(minutes=10):
+            return jsonify({'error': 'Email não verificado. Por favor, verifique seu email primeiro.'}), 400
+        
         usuario = Usuario(
             nome_completo=data['nome_completo'],
             apelido=data['apelido'],
             data_nascimento=datetime.strptime(data['data_nascimento'], '%Y-%m-%d').date(),
             escolaridade=data['escolaridade'],
             email=data['email'],
-            telefone=data.get('telefone', ''),
             senha=generate_password_hash(data['senha']),
-            aceitou_termos=data['aceitou_termos']
+            aceitou_termos=data['aceitou_termos'],
+            email_verificado=True
         )
         
         db.session.add(usuario)
@@ -218,7 +443,6 @@ def get_me():
             'data_nascimento': usuario.data_nascimento.isoformat(),
             'escolaridade': usuario.escolaridade,
             'email': usuario.email,
-            'telefone': usuario.telefone or '',
             'aceitou_termos': usuario.aceitou_termos,
             'is_admin': usuario.is_admin,
             'created_at': usuario.created_at.isoformat()
@@ -244,7 +468,6 @@ def get_perfil():
             'data_nascimento': usuario.data_nascimento.isoformat(),
             'escolaridade': usuario.escolaridade,
             'email': usuario.email,
-            'telefone': usuario.telefone or '',
             'aceitou_termos': usuario.aceitou_termos,
             'is_admin': usuario.is_admin,
             'created_at': usuario.created_at.isoformat()
@@ -276,8 +499,6 @@ def update_perfil():
             if existing_user and existing_user.id != user_id:
                 return jsonify({'error': 'Email já cadastrado'}), 400
             usuario.email = data['email']
-        if 'telefone' in data:
-            usuario.telefone = data['telefone']
         if 'data_nascimento' in data:
             usuario.data_nascimento = datetime.strptime(data['data_nascimento'], '%Y-%m-%d').date()
         if 'senha' in data and data['senha']:
@@ -324,15 +545,12 @@ def recuperar_senha():
             
             return jsonify({'message': 'Senha redefinida com sucesso'}), 200
         else:
-            usuario = Usuario.query.filter_by(
-                email=data['email'],
-                telefone=data['telefone']
-            ).first()
+            usuario = Usuario.query.filter_by(email=data['email']).first()
             
             if usuario:
                 return jsonify({'message': 'Dados verificados. Você pode redefinir sua senha.'}), 200
             else:
-                return jsonify({'error': 'Email ou telefone não conferem'}), 400
+                return jsonify({'error': 'Email não encontrado'}), 400
             
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -950,11 +1168,42 @@ def internal_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
-        
         try:
+            db.create_all()
+            
             from sqlalchemy import text, inspect
             inspector = inspect(db.engine)
+            
+            # Verificar e atualizar tabela usuario
+            if 'usuario' in inspector.get_table_names():
+                columns = [col['name'] for col in inspector.get_columns('usuario')]
+                
+                # Adicionar coluna email_verificado se não existir
+                if 'email_verificado' not in columns:
+                    try:
+                        if DB_TYPE == 'mysql':
+                            db.session.execute(text("ALTER TABLE usuario ADD COLUMN email_verificado BOOLEAN DEFAULT 0"))
+                        else:
+                            db.session.execute(text("ALTER TABLE usuario ADD COLUMN email_verificado BOOLEAN DEFAULT 0"))
+                        db.session.commit()
+                        print("Coluna email_verificado adicionada com sucesso!")
+                    except Exception as e:
+                        print(f"Erro ao adicionar email_verificado: {e}")
+                        db.session.rollback()
+                
+                # Remover coluna telefone se existir (migração)
+                if 'telefone' in columns:
+                    try:
+                        if DB_TYPE == 'mysql':
+                            # MySQL não suporta DROP COLUMN diretamente em algumas versões
+                            # Vamos apenas ignorar por enquanto
+                            print("Coluna telefone ainda existe, mas será ignorada.")
+                        else:
+                            # SQLite não suporta DROP COLUMN, então vamos apenas ignorar
+                            print("Coluna telefone ainda existe, mas será ignorada.")
+                    except Exception as e:
+                        print(f"Erro ao remover telefone: {e}")
+                        db.session.rollback()
             
             # Verificar se a tabela questao existe
             if 'questao' in inspector.get_table_names():
@@ -970,24 +1219,43 @@ if __name__ == '__main__':
                         db.session.execute(text("ALTER TABLE questao ADD COLUMN publica BOOLEAN DEFAULT 0"))
                 
                 db.session.commit()
+            
+            # Criar tabela codigo_verificacao se não existir
+            if 'codigo_verificacao' not in inspector.get_table_names():
+                db.create_all()
+                print("Tabela codigo_verificacao criada!")
+            
         except Exception as e:
-            print(f"Erro ao verificar colunas: {e}")
-            db.session.rollback()
+            print(f"Erro ao verificar/atualizar banco de dados: {e}")
+            print("Tentando continuar mesmo assim...")
+            try:
+                db.session.rollback()
+            except:
+                pass
         
-        admin = Usuario.query.filter_by(email='admin@enemlife.com').first()
-        if not admin:
-            admin = Usuario(
-                nome_completo='Administrador ENEMLIFE',
-                apelido='Admin',
-                data_nascimento=datetime(1990, 1, 1).date(),
-                escolaridade='Superior',
-                email='admin@enemlife.com',
-                telefone='(84) 99999-9999',
-                senha=generate_password_hash('admin123'),
-                aceitou_termos=True,
-                is_admin=True
-            )
-            db.session.add(admin)
-            db.session.commit()
+        # Criar usuário admin se não existir
+        try:
+            admin = Usuario.query.filter_by(email='admin@enemlife.com').first()
+            if not admin:
+                admin = Usuario(
+                    nome_completo='Administrador ENEMLIFE',
+                    apelido='Admin',
+                    data_nascimento=datetime(1990, 1, 1).date(),
+                    escolaridade='Superior',
+                    email='admin@enemlife.com',
+                    senha=generate_password_hash('admin123'),
+                    aceitou_termos=True,
+                    email_verificado=True,
+                    is_admin=True
+                )
+                db.session.add(admin)
+                db.session.commit()
+                print("Usuário admin criado com sucesso!")
+        except Exception as e:
+            print(f"Erro ao criar usuário admin: {e}")
+            try:
+                db.session.rollback()
+            except:
+                pass
     
     app.run(debug=True, host='0.0.0.0', port=7000)
