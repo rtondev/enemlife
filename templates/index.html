@@ -58,29 +58,10 @@
 
         <!-- Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Team Member 1 -->
+            <!-- Team Member 1 - Sarah -->
             <div class="flex flex-col rounded-xl p-4 md:p-6 bg-white border border-gray-200">
                 <div class="flex items-center gap-x-4">
-                    <img class="rounded-full size-20" src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80" alt="Avatar">
-                    <div class="grow">
-                        <h3 class="font-medium text-gray-800">
-                            Clayton
-                        </h3>
-                        <p class="text-xs uppercase text-gray-500">
-                            Fundador
-                        </p>
-                    </div>
-                </div>
-                <p class="mt-3 text-gray-500">
-                    Dedicado a democratizar o acesso à preparação de qualidade para o enem.
-                </p>
-            </div>
-            <!-- End Col -->
-
-            <!-- Team Member 2 -->
-            <div class="flex flex-col rounded-xl p-4 md:p-6 bg-white border border-gray-200">
-                <div class="flex items-center gap-x-4">
-                    <img class="rounded-full size-20" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80" alt="Avatar">
+                    <img class="rounded-full size-20 object-cover" src="{{ url_for('static', filename='assets/imgs/sarah.jpeg') }}" alt="Sarah">
                     <div class="grow">
                         <h3 class="font-medium text-gray-800">
                             Sarah
@@ -96,10 +77,10 @@
             </div>
             <!-- End Col -->
 
-            <!-- Team Member 3 -->
+            <!-- Team Member 2 - Marilia -->
             <div class="flex flex-col rounded-xl p-4 md:p-6 bg-white border border-gray-200">
                 <div class="flex items-center gap-x-4">
-                    <img class="rounded-full size-20" src="https://images.unsplash.com/photo-1548142813-c348350df52b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80" alt="Avatar">
+                    <img class="rounded-full size-20 object-cover" src="{{ url_for('static', filename='assets/imgs/marilia.jpeg') }}" alt="Marilia">
                     <div class="grow">
                         <h3 class="font-medium text-gray-800">
                             Marilia
@@ -111,6 +92,25 @@
                 </div>
                 <p class="mt-3 text-gray-500">
                     Co-fundadora responsável por transformar ideias em realidade, criando a melhor experiência para os estudantes.
+                </p>
+            </div>
+            <!-- End Col -->
+
+            <!-- Team Member 3 - Clayton (mais abaixo) -->
+            <div class="flex flex-col rounded-xl p-4 md:p-6 bg-white border border-gray-200 sm:col-span-2 lg:col-span-1 lg:mt-8">
+                <div class="flex items-center gap-x-4">
+                    <img class="rounded-full size-20 object-cover object-top" src="{{ url_for('static', filename='assets/imgs/clayton.jpg') }}" alt="Clayton">
+                    <div class="grow">
+                        <h3 class="font-medium text-gray-800">
+                            Clayton
+                        </h3>
+                        <p class="text-xs uppercase text-gray-500">
+                            Fundador
+                        </p>
+                    </div>
+                </div>
+                <p class="mt-3 text-gray-500">
+                    Dedicado a democratizar o acesso à preparação de qualidade para o enem.
                 </p>
             </div>
             <!-- End Col -->
